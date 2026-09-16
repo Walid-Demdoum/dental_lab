@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <template id="portal_my_home_dental_order" name="Show Dental Orders on Home" inherit_id="portal.portal_my_home" priority="50">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Dental Work Orders</t>
+                <t t-set="url" t-value="'/my/dental-orders'"/>
+                <t t-set="placeholder_count" t-value="'dental_order_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_dental_orders" name="My Dental Work Orders">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Work Orders</t>
+            </t>
+
+            <div class="mb-3">
+                <a href="/my/dental-orders/new" class="btn btn-primary">
+                    <i class="fa fa-plus"/> New Work Order
+                </a>
+            </div>
+
+            <t t-if="not orders">
+                <p>There are no dental work orders yet.</p>
+            </t>
+            <t t-if="orders" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Reference</th>
+                        <th>Patient</th>
+                        <th>Work Type</th>
+                        <th>Order Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="orders" t-as="order">
+                        <td>
+                            <a t-attf-href="/my/dental-orders/#{order.id}">
+                                <span t-field="order.name"/>
+                            </a>
+                        </td>
+                        <td><span t-field="order.patient_name"/></td>
+                        <td><span t-field="order.work_type"/></td>
+                        <td><span t-field="order.date_order"/></td>
+                        <td>
+                            <span t-field="order.state"
+                                  t-attf-class="badge #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_dental_order_form" name="New Dental Work Order">
+        <t t-call="portal.portal_layout">
+            <t t-set="page_name" t-value="'dental_order_new'"/>
+            <div class="o_portal_my_doc_book_container">
+                <h3>New Work Order</h3>
+                <form action="/my/dental-orders/submit" method="post" class="row g-3">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                    <div class="col-md-6">
+                        <label class="form-label" for="patient_name">Patient Name</label>
+                        <input type="text" class="form-control" id="patient_name" name="patient_name" required="required"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="tooth_numbers">Tooth Number(s)</label>
+                        <input type="text" class="form-control" id="tooth_numbers" name="tooth_numbers" placeholder="e.g. 11, 12, 21"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="work_type">Work Type</label>
+                        <select class="form-select" id="work_type" name="work_type" required="required">
+                            <option value="crown">Crown</option>
+                            <option value="bridge">Bridge</option>
+                            <option value="denture">Denture</option>
+                            <option value="implant">Implant</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="shade">Shade / Color</label>
+                        <input type="text" class="form-control" id="shade" name="shade"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="material">Material</label>
+                        <input type="text" class="form-control" id="material" name="material"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="date_due">Due Date</label>
+                        <input type="date" class="form-control" id="date_due" name="date_due"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="priority">Priority</label>
+                        <select class="form-select" id="priority" name="priority">
+                            <option value="0" selected="selected">Normal</option>
+                            <option value="1">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="notes">Instructions / Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="4"/>
+                    </div>
+                    <div class="col-12">
+                        <a href="/my/dental-orders" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Submit Work Order</button>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_dental_order_page" name="Dental Work Order">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title" t-value="order.name"/>
+            <div class="o_portal_my_doc_book_container">
+                <h3>
+                    Work Order <span t-field="order.name"/>
+                    <span t-field="order.state"
+                          t-attf-class="badge float-end #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
+                </h3>
+                <table class="table table-borderless">
+                    <tr><td>Patient</td><td><span t-field="order.patient_name"/></td></tr>
+                    <tr><td>Tooth Number(s)</td><td><span t-field="order.tooth_numbers"/></td></tr>
+                    <tr><td>Work Type</td><td><span t-field="order.work_type"/></td></tr>
+                    <tr><td>Shade</td><td><span t-field="order.shade"/></td></tr>
+                    <tr><td>Material</td><td><span t-field="order.material"/></td></tr>
+                    <tr><td>Order Date</td><td><span t-field="order.date_order"/></td></tr>
+                    <tr><td>Due Date</td><td><span t-field="order.date_due"/></td></tr>
+                    <tr><td>Technician</td><td><span t-field="order.technician_id.name"/></td></tr>
+                    <tr><td>Notes</td><td><span t-field="order.notes"/></td></tr>
+                </table>
+            </div>
+        </t>
+    </template>
+
+</odoo>

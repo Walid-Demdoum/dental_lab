@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_dental_lab_root"
+              name="Dental Lab"
+              sequence="45"
+              groups="group_dental_lab_technician"/>
+
+    <menuitem id="menu_dental_lab_orders"
+              name="Work Orders"
+              parent="menu_dental_lab_root"
+              action="action_dental_lab_order"
+              sequence="10"/>
+</odoo>

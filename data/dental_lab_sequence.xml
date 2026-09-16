@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_dental_lab_order" model="ir.sequence">
+        <field name="name">Dental Lab Order</field>
+        <field name="code">dental.lab.order</field>
+        <field name="prefix">DL/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>
