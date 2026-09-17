@@ -1,3 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_dental_lab_order_portal,dental.lab.order.portal,model_dental_lab_order,base.group_portal,1,1,1,0
 access_dental_lab_order_technician,dental.lab.order.technician,model_dental_lab_order,group_dental_lab_technician,1,1,1,1
+
+access_dental_lab_order_line_portal,dental.lab.order.line.portal,model_dental_order_line,base.group_portal,1,1,1,0
+access_dental_lab_order_line_technician,dental.lab.order.line.technician,model_dental_order_line,group_dental_lab_technician,1,1,1,1

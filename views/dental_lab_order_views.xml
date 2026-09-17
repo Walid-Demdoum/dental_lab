@@ -4,22 +4,16 @@
         <field name="name">dental.lab.order.list</field>
         <field name="model">dental.lab.order</field>
         <field name="arch" type="xml">
-            <list string="Dental Work Orders"
-                  decoration-success="state == 'done'"
-                  decoration-info="state == 'in_progress'"
-                  decoration-muted="state == 'cancel'">
+            <list string="Dental Work Orders" decoration-success="state == 'done'" decoration-info="state == 'in_progress'" decoration-muted="state == 'cancel'">
                 <field name="name"/>
+                <field name="ref" />
                 <field name="partner_id"/>
                 <field name="patient_name"/>
-                <field name="work_type"/>
                 <field name="date_order"/>
                 <field name="date_due"/>
                 <field name="technician_id"/>
                 <field name="priority" widget="priority" optional="show"/>
-                <field name="state" widget="badge"
-                       decoration-success="state == 'done'"
-                       decoration-info="state == 'in_progress'"
-                       decoration-danger="state == 'cancel'"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'in_progress'" decoration-danger="state == 'cancel'"/>
             </list>
         </field>
     </record>
@@ -30,15 +24,11 @@
         <field name="arch" type="xml">
             <form string="Dental Work Order">
                 <header>
-                    <button name="action_start" type="object" string="Start"
-                            class="btn-primary" invisible="state != 'draft'"/>
-                    <button name="action_done" type="object" string="Mark as Done"
-                            class="btn-primary" invisible="state != 'in_progress'"/>
-                    <button name="action_cancel" type="object" string="Cancel"
-                            invisible="state in ('done', 'cancel')"/>
-                    <button name="action_reset_to_draft" type="object" string="Reset to New"
-                            invisible="state != 'cancel'"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,done"/>
+                    <button name="action_start" type="object" string="Start" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_done" type="object" string="Mark as Done" class="btn-primary" invisible="state != 'in_progress'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('done', 'cancel')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to New" invisible="state != 'cancel'"/>
+                    <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -48,25 +38,40 @@
                         <group>
                             <field name="partner_id"/>
                             <field name="patient_name"/>
-                            <field name="tooth_numbers"/>
-                            <field name="work_type"/>
+                            <field name="ref" />
+                            <field name="technician_id"/>
                         </group>
                         <group>
                             <field name="date_order"/>
                             <field name="date_due"/>
                             <field name="priority" widget="priority"/>
-                            <field name="technician_id"/>
                         </group>
                     </group>
                     <group>
                         <group>
                             <field name="shade"/>
-                            <field name="material"/>
                         </group>
                     </group>
                     <group>
                         <field name="notes" placeholder="Special instructions from the dentist..."/>
                     </group>
+                    <notebook>
+                        <page name="work_lines" string="Work Lines">
+                            <field name="work_order_line_ids">
+                                <list editable="bottom">
+                                    <field name="currency_id" column_invisible="1" readonly="1"/>
+                                    <field name="work_order_id" readonly="1" column_invisible="1"/>
+                                    <field name="work_type" required="1"/>
+                                    <field name="description" />
+                                    <field name="teeth" required="1"/>
+                                    <field name="is_implant" widget="boolean_toggle"/>
+                                    <field name="quantity" required="1"/>
+                                    <field name="unit_price" required="1"/>
+                                    <field name="total_price" readonly="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
                 <chatter/>
             </form>
@@ -88,7 +93,7 @@
                                 <field name="priority" widget="priority"/>
                             </div>
                             <div><field name="patient_name"/></div>
-                            <div class="text-muted"><field name="work_type"/></div>
+                            <div><field name="ref"/></div>
                             <div class="d-flex justify-content-between mt-2">
                                 <field name="technician_id" widget="many2one_avatar_user"/>
                                 <field name="date_due"/>
@@ -109,6 +114,7 @@
                 <field name="patient_name"/>
                 <field name="partner_id" string="Dentist"/>
                 <field name="technician_id"/>
+                <field name="ref" />
                 <filter name="filter_draft" string="New" domain="[('state', '=', 'draft')]"/>
                 <filter name="filter_in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
                 <filter name="filter_done" string="Done" domain="[('state', '=', 'done')]"/>
@@ -119,7 +125,6 @@
                     <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
                     <filter name="group_by_technician" string="Technician" context="{'group_by': 'technician_id'}"/>
                     <filter name="group_by_dentist" string="Dentist" context="{'group_by': 'partner_id'}"/>
-                    <filter name="group_by_work_type" string="Work Type" context="{'group_by': 'work_type'}"/>
                 </group>
             </search>
         </field>

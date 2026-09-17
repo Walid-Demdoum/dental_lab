@@ -77,10 +77,7 @@ class DentalLabPortal(CustomerPortal):
         vals = {
             'partner_id': request.env.user.partner_id.id,
             'patient_name': post.get('patient_name'),
-            'tooth_numbers': post.get('tooth_numbers'),
-            'work_type': post.get('work_type'),
             'shade': post.get('shade'),
-            'material': post.get('material'),
             'date_due': post.get('date_due') or False,
             'priority': post.get('priority') or '0',
             'notes': post.get('notes'),

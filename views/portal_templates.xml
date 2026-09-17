@@ -5,7 +5,7 @@
     <template id="portal_my_home_dental_order" name="Show Dental Orders on Home" customize_show="True" inherit_id="portal.portal_my_home" priority="50">
         <div id="portal_client_category" position="inside">
             <t t-call="portal.portal_docs_entry">
-                <t t-set="icon" t-value="'dental_lab/static/src/img/tooth.svg'"/>
+                <t t-set="icon" t-value="'/dental_lab/static/src/img/t.svg'"/>
                 <t t-set="title">My work orders</t>
                 <t t-set="url" t-value="'/my/dental-orders'"/>
                 <t t-set="text">Create or track your work orders here</t>
@@ -52,7 +52,6 @@
                             </a>
                         </td>
                         <td><span t-field="order.patient_name"/></td>
-                        <td><span t-field="order.work_type"/></td>
                         <td><span t-field="order.date_order"/></td>
                         <td>
                             <span t-field="order.state" t-attf-class="badge #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
@@ -76,28 +75,13 @@
                         <label class="form-label" for="patient_name">Patient Name</label>
                         <input type="text" class="form-control" id="patient_name" name="patient_name" required="required"/>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="tooth_numbers">Tooth Number(s)</label>
-                        <input type="text" class="form-control" id="tooth_numbers" name="tooth_numbers" placeholder="e.g. 11, 12, 21"/>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="work_type">Work Type</label>
-                        <select class="form-select" id="work_type" name="work_type" required="required">
-                            <option value="crown">Crown</option>
-                            <option value="bridge">Bridge</option>
-                            <option value="denture">Denture</option>
-                            <option value="implant">Implant</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
+                    
+                    
                     <div class="col-md-6">
                         <label class="form-label" for="shade">Shade / Color</label>
                         <input type="text" class="form-control" id="shade" name="shade"/>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="material">Material</label>
-                        <input type="text" class="form-control" id="material" name="material"/>
-                    </div>
+                    
                     <div class="col-md-6">
                         <label class="form-label" for="date_due">Due Date</label>
                         <input type="date" class="form-control" id="date_due" name="date_due"/>
@@ -133,15 +117,12 @@
                     <span t-field="order.state" t-attf-class="badge float-end #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
                 </h3>
                 <table class="table table-borderless">
-                    <tr><td>Patient</td><td><span t-field="order.patient_name"/></td></tr>
-                    <tr><td>Tooth Number(s)</td><td><span t-field="order.tooth_numbers"/></td></tr>
-                    <tr><td>Work Type</td><td><span t-field="order.work_type"/></td></tr>
-                    <tr><td>Shade</td><td><span t-field="order.shade"/></td></tr>
-                    <tr><td>Material</td><td><span t-field="order.material"/></td></tr>
-                    <tr><td>Order Date</td><td><span t-field="order.date_order"/></td></tr>
-                    <tr><td>Due Date</td><td><span t-field="order.date_due"/></td></tr>
-                    <tr><td>Technician</td><td><span t-field="order.technician_id.name"/></td></tr>
-                    <tr><td>Notes</td><td><span t-field="order.notes"/></td></tr>
+                    <tr><td class="fw-bold">Patient</td><td><span t-field="order.patient_name"/></td></tr>
+                    <tr><td class="fw-bold">Shade</td><td><span t-field="order.shade"/></td></tr>
+                    <tr><td class="fw-bold">Order Date</td><td><span t-field="order.date_order"/></td></tr>
+                    <tr><td class="fw-bold">Due Date</td><td><span t-field="order.date_due"/></td></tr>
+                    <tr><td class="fw-bold">Technician</td><td><span t-field="order.technician_id.name"/></td></tr>
+                    <tr><td class="fw-bold">Notes</td><td><span t-field="order.notes"/></td></tr>
                 </table>
             </div>
         </t>
