@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <odoo>
 
-    <template id="portal_my_home_dental_order" name="Show Dental Orders on Home" inherit_id="portal.portal_my_home" priority="50">
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+    <!-- Portal access menu -->
+    <template id="portal_my_home_dental_order" name="Show Dental Orders on Home" customize_show="True" inherit_id="portal.portal_my_home" priority="50">
+        <div id="portal_client_category" position="inside">
             <t t-call="portal.portal_docs_entry">
-                <t t-set="title">Dental Work Orders</t>
+                <t t-set="icon" t-value="'dental_lab/static/src/img/tooth.svg'"/>
+                <t t-set="title">My work orders</t>
                 <t t-set="url" t-value="'/my/dental-orders'"/>
+                <t t-set="text">Create or track your work orders here</t>
                 <t t-set="placeholder_count" t-value="'dental_order_count'"/>
             </t>
-        </xpath>
+        </div>
+        
     </template>
 
+
+    <!-- Work orders List View -->
     <template id="portal_my_dental_orders" name="My Dental Work Orders">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
@@ -22,7 +27,7 @@
 
             <div class="mb-3">
                 <a href="/my/dental-orders/new" class="btn btn-primary">
-                    <i class="fa fa-plus"/> New Work Order
+                    <i class="fa fa-plus"/> Create
                 </a>
             </div>
 
@@ -50,8 +55,7 @@
                         <td><span t-field="order.work_type"/></td>
                         <td><span t-field="order.date_order"/></td>
                         <td>
-                            <span t-field="order.state"
-                                  t-attf-class="badge #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
+                            <span t-field="order.state" t-attf-class="badge #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
                         </td>
                     </tr>
                 </tbody>
@@ -59,6 +63,7 @@
         </t>
     </template>
 
+    <!-- CREATE NEW RECORD VIEW -->
     <template id="portal_dental_order_form" name="New Dental Work Order">
         <t t-call="portal.portal_layout">
             <t t-set="page_name" t-value="'dental_order_new'"/>
@@ -117,14 +122,15 @@
         </t>
     </template>
 
+
+    <!-- WORK ORDER FORM VIEW -->
     <template id="portal_dental_order_page" name="Dental Work Order">
         <t t-call="portal.portal_layout">
             <t t-set="additional_title" t-value="order.name"/>
             <div class="o_portal_my_doc_book_container">
                 <h3>
                     Work Order <span t-field="order.name"/>
-                    <span t-field="order.state"
-                          t-attf-class="badge float-end #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
+                    <span t-field="order.state" t-attf-class="badge float-end #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
                 </h3>
                 <table class="table table-borderless">
                     <tr><td>Patient</td><td><span t-field="order.patient_name"/></td></tr>

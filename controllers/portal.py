@@ -2,7 +2,7 @@ from odoo import http, _
 from odoo.exceptions import AccessError, MissingError
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
-
+import logging
 
 class DentalLabPortal(CustomerPortal):
 
