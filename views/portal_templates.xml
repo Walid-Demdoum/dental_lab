@@ -39,7 +39,6 @@
                     <tr class="active">
                         <th>Reference</th>
                         <th>Patient</th>
-                        <th>Work Type</th>
                         <th>Order Date</th>
                         <th>Status</th>
                     </tr>
