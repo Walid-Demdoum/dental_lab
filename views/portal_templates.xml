@@ -5,7 +5,7 @@
     <template id="portal_my_home_dental_order" name="Show Dental Orders on Home" customize_show="True" inherit_id="portal.portal_my_home" priority="50">
         <div id="portal_client_category" position="inside">
             <t t-call="portal.portal_docs_entry">
-                <t t-set="icon" t-value="'/dental_lab/static/src/img/t.svg'"/>
+                <t t-set="icon" t-value="'/dental_lab/static/src/img/tooth.svg'"/>
                 <t t-set="title">My work orders</t>
                 <t t-set="url" t-value="'/my/dental-orders'"/>
                 <t t-set="text">Create or track your work orders here</t>
