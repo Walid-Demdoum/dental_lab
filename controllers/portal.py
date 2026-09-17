@@ -94,3 +94,37 @@ class DentalLabPortal(CustomerPortal):
 
         values = self._dental_order_get_page_view_values(order_sudo, access_token, **kw)
         return request.render('dental_lab.portal_dental_order_page', values)
+
+
+    @http.route(['/my/dental-orders/<int:order_id>/edit'], type='http', auth='user', website=True, methods=['GET'])
+    def portal_dental_order_edit(self, order_id, access_token=None, **kw):
+        try:
+            order_sudo = self._document_check_access('dental.lab.order', order_id, access_token=access_token)
+        except (AccessError, MissingError):
+            return request.redirect('/my')
+
+        if order_sudo.state != 'draft':
+            return request.redirect('/my/dental-orders/%s' % order_sudo.id)
+
+        values = self._dental_order_get_page_view_values(order_sudo, access_token, **kw)
+        return request.render('dental_lab.portal_dental_order_edit_form', values)
+
+    @http.route(['/my/dental-orders/<int:order_id>/update'], type='http', auth='user', website=True, methods=['POST'], csrf=True)
+    def portal_dental_order_update(self, order_id, **post):
+        try:
+            order_sudo = self._document_check_access('dental.lab.order', order_id)
+        except (AccessError, MissingError):
+            return request.redirect('/my')
+
+        if order_sudo.state != 'draft':
+            return request.redirect('/my/dental-orders/%s' % order_sudo.id)
+
+        vals = {
+            'patient_name': post.get('patient_name'),
+            'shade': post.get('shade'),
+            'date_due': post.get('date_due') or False,
+            'priority': post.get('priority') or '0',
+            'notes': post.get('notes'),
+        }
+        order_sudo.write(vals)
+        return request.redirect('/my/dental-orders/%s' % order_sudo.id)

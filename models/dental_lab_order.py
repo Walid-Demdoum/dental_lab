@@ -1,5 +1,7 @@
-from odoo import api, fields, models
+from odoo import api, fields, models,_
 from odoo.exceptions import UserError
+
+
 STATE_SELECTION = [ ('draft', 'New'),
                     ('in_progress', 'In Progress'),
                     ('done', 'Done'),
@@ -40,6 +42,13 @@ class DentalLabOrder(models.Model):
                 vals['name'] = self.env['ir.sequence'].next_by_code('dental.lab.order') or 'New'
         return super().create(vals_list)
 
+    def write(self, vals):
+        if self.env.user.share:
+            for order in self:
+                if order.state != 'draft':
+                    raise UserError(_("You can only edit a work order while it is still in the 'New' state."))
+        return super().write(vals)
+
     def action_start(self):
         for order in self:
             if order.state != 'draft':
@@ -58,3 +67,5 @@ class DentalLabOrder(models.Model):
 
     def action_reset_to_draft(self):
         self.write({'state': 'draft'})
+
+    

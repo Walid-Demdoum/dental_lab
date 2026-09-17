@@ -54,10 +54,14 @@
                         <td><span t-field="order.date_order"/></td>
                         <td>
                             <span t-field="order.state" t-attf-class="badge #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
+                            <a t-if="order.state == 'draft'" t-attf-href="/my/dental-orders/#{order.id}/edit" class="ms-2" title="Edit">
+                                <i class="fa fa-pencil"/>
+                            </a>
                         </td>
                     </tr>
                 </tbody>
             </t>
+            
         </t>
     </template>
 
@@ -65,40 +69,34 @@
     <template id="portal_dental_order_form" name="New Dental Work Order">
         <t t-call="portal.portal_layout">
             <t t-set="page_name" t-value="'dental_order_new'"/>
+            <t t-set="order" t-value="False"/>
             <div class="o_portal_my_doc_book_container">
                 <h3>New Work Order</h3>
                 <form action="/my/dental-orders/submit" method="post" class="row g-3">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-
-                    <div class="col-md-6">
-                        <label class="form-label" for="patient_name">Patient Name</label>
-                        <input type="text" class="form-control" id="patient_name" name="patient_name" required="required"/>
-                    </div>
-                    
-                    
-                    <div class="col-md-6">
-                        <label class="form-label" for="shade">Shade / Color</label>
-                        <input type="text" class="form-control" id="shade" name="shade"/>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label class="form-label" for="date_due">Due Date</label>
-                        <input type="date" class="form-control" id="date_due" name="date_due"/>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="priority">Priority</label>
-                        <select class="form-select" id="priority" name="priority">
-                            <option value="0" selected="selected">Normal</option>
-                            <option value="1">Urgent</option>
-                        </select>
-                    </div>
-                    <div class="col-12">
-                        <label class="form-label" for="notes">Instructions / Notes</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="4"/>
-                    </div>
+                    <t t-call="dental_lab.portal_dental_order_form_fields"/>
                     <div class="col-12">
                         <a href="/my/dental-orders" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">Submit Work Order</button>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+
+
+    <!-- EDIT EXISTING RECORD VIEW (draft only) -->
+    <template id="portal_dental_order_edit_form" name="Edit Dental Work Order">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title" t-value="order.name"/>
+            <div class="o_portal_my_doc_book_container">
+                <h3>Edit Work Order <span t-field="order.name"/></h3>
+                <form t-attf-action="/my/dental-orders/#{order.id}/update" method="post" class="row g-3">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <t t-call="dental_lab.portal_dental_order_form_fields"/>
+                    <div class="col-12">
+                        <a t-attf-href="/my/dental-orders/#{order.id}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -123,8 +121,41 @@
                     <tr><td class="fw-bold">Technician</td><td><span t-field="order.technician_id.name"/></td></tr>
                     <tr><td class="fw-bold">Notes</td><td><span t-field="order.notes"/></td></tr>
                 </table>
+                <a t-if="order.state == 'draft'" t-attf-href="/my/dental-orders/#{order.id}/edit" class="btn btn-primary mt-2">
+                    <i class="fa fa-pencil"/> Edit Work Order
+                </a>
             </div>
         </t>
     </template>
 
+    <template id="portal_dental_order_form_fields" name="Dental Work Order Form Fields">
+        <div class="col-md-6">
+            <label class="form-label" for="patient_name">Patient Name</label>
+            <input type="text" class="form-control" id="patient_name" name="patient_name"
+                t-att-value="order.patient_name if order else ''" required="required"/>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="shade">Shade / Color</label>
+            <input type="text" class="form-control" id="shade" name="shade"
+                t-att-value="order.shade if order else ''"/>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="date_due">Due Date</label>
+            <input type="date" class="form-control" id="date_due" name="date_due"
+                t-att-value="order.date_due if order else ''"/>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="priority">Priority</label>
+            <select class="form-select" id="priority" name="priority">
+                <option value="0" t-att-selected="'selected' if not order or order.priority == '0' else None">Normal</option>
+                <option value="1" t-att-selected="'selected' if order and order.priority == '1' else None">Urgent</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <label class="form-label" for="notes">Instructions / Notes</label>
+            <textarea class="form-control" id="notes" name="notes" rows="4"><t t-esc="order.notes if order else ''"/></textarea>
+        </div>
+    </template>
+
+    
 </odoo>
