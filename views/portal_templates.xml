@@ -23,6 +23,7 @@
                 <t t-if="order">
                     <t t-foreach="order.work_order_line_ids" t-as="line" t-key="line.id">
                         <div class="row g-2 align-items-end dental-line-row border rounded p-2 mb-2">
+                            <input type="hidden" t-attf-name="lines-#{line_index}-line_id" t-att-value="line.id"/>
                             <div class="col-md-2">
                                 <label class="form-label">Teeth</label>
                                 <input type="text" class="form-control" required="required"

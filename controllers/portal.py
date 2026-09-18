@@ -9,7 +9,8 @@ class DentalLabPortal(CustomerPortal):
     
     LINE_FIELD_RE = re.compile(r'^lines-(\d+)-work_type$')
 
-    def _prepare_line_commands(self, post):
+    def _prepare_line_commands(self, post, existing_line_ids=None):
+        existing_line_ids = set(existing_line_ids or [])
         indices = set()
         for key in post.keys():
             m = self.LINE_FIELD_RE.match(key)
@@ -17,6 +18,7 @@ class DentalLabPortal(CustomerPortal):
                 indices.add(int(m.group(1)))
 
         commands = []
+        kept_line_ids = set()
         for i in sorted(indices):
             prefix = 'lines-%s-' % i
             work_type = post.get(prefix + 'work_type')
@@ -24,14 +26,26 @@ class DentalLabPortal(CustomerPortal):
             if not work_type and not teeth:
                 continue
             quantity = int(post.get(prefix + 'quantity') or 1)
-            commands.append((0, 0, {
+            vals = {
                 'work_type': work_type or False,
                 'teeth': teeth,
                 'description': post.get(prefix + 'description'),
                 'quantity': max(quantity, 1),
                 'is_implant': bool(post.get(prefix + 'is_implant')),
-            }))
-        logging.info("====================== Commands %s",commands)
+            }
+            raw_line_id = post.get(prefix + 'line_id')
+            line_id = int(raw_line_id) if raw_line_id and raw_line_id.isdigit() else False
+            # Only accept a line_id that genuinely belongs to this order — never
+            # trust a client-submitted id blindly, or a portal user could pass
+            # someone else's line id and overwrite it via (1, id, vals).
+            if line_id and line_id in existing_line_ids:
+                kept_line_ids.add(line_id)
+                commands.append((1, line_id, vals))
+            else:
+                commands.append((0, 0, vals))
+        # Any existing line whose id wasn't resubmitted was removed in the UI
+        for removed_id in existing_line_ids - kept_line_ids:
+            commands.append((2, removed_id, 0))
         return commands
 
     def _prepare_home_portal_values(self, counters):
@@ -125,6 +139,7 @@ class DentalLabPortal(CustomerPortal):
         return request.render('dental_lab.portal_dental_order_page', values)
 
 
+    #Edit route
     @http.route(['/my/dental-orders/<int:order_id>/edit'], type='http', auth='user', website=True, methods=['GET'])
     def portal_dental_order_edit(self, order_id, access_token=None, **kw):
         try:
@@ -138,6 +153,7 @@ class DentalLabPortal(CustomerPortal):
         values = self._dental_order_get_page_view_values(order_sudo, access_token, **kw)
         return request.render('dental_lab.portal_dental_order_edit_form', values)
 
+    #Update route
     @http.route(['/my/dental-orders/<int:order_id>/update'], type='http', auth='user', website=True, methods=['POST'], csrf=True)
     def portal_dental_order_update(self, order_id, **post):
         try:
@@ -154,7 +170,7 @@ class DentalLabPortal(CustomerPortal):
             'date_due': post.get('date_due') or False,
             'priority': post.get('priority') or '0',
             'notes': post.get('notes'),
-            'work_order_line_ids': [(5, 0, 0)] + self._prepare_line_commands(post),
+            'work_order_line_ids': self._prepare_line_commands(post, existing_line_ids=order_sudo.work_order_line_ids.ids),
         }
         order_sudo.write(vals)
         return request.redirect('/my/dental-orders/%s' % order_sudo.id)
