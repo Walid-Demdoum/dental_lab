@@ -3,8 +3,36 @@ from odoo.exceptions import AccessError, MissingError
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 import logging
+import re
 
 class DentalLabPortal(CustomerPortal):
+    
+    LINE_FIELD_RE = re.compile(r'^lines-(\d+)-work_type$')
+
+    def _prepare_line_commands(self, post):
+        indices = set()
+        for key in post.keys():
+            m = self.LINE_FIELD_RE.match(key)
+            if m:
+                indices.add(int(m.group(1)))
+
+        commands = []
+        for i in sorted(indices):
+            prefix = 'lines-%s-' % i
+            work_type = post.get(prefix + 'work_type')
+            teeth = post.get(prefix + 'teeth')
+            if not work_type and not teeth:
+                continue
+            quantity = int(post.get(prefix + 'quantity') or 1)
+            commands.append((0, 0, {
+                'work_type': work_type or False,
+                'teeth': teeth,
+                'description': post.get(prefix + 'description'),
+                'quantity': max(quantity, 1),
+                'is_implant': bool(post.get(prefix + 'is_implant')),
+            }))
+        logging.info("====================== Commands %s",commands)
+        return commands
 
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
@@ -81,6 +109,7 @@ class DentalLabPortal(CustomerPortal):
             'date_due': post.get('date_due') or False,
             'priority': post.get('priority') or '0',
             'notes': post.get('notes'),
+            'work_order_line_ids': self._prepare_line_commands(post),
         }
         order = request.env['dental.lab.order'].sudo().create(vals)
         return request.redirect('/my/dental-orders/%s' % order.id)
@@ -125,6 +154,7 @@ class DentalLabPortal(CustomerPortal):
             'date_due': post.get('date_due') or False,
             'priority': post.get('priority') or '0',
             'notes': post.get('notes'),
+            'work_order_line_ids': [(5, 0, 0)] + self._prepare_line_commands(post),
         }
         order_sudo.write(vals)
         return request.redirect('/my/dental-orders/%s' % order_sudo.id)

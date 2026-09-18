@@ -22,4 +22,9 @@
     'installable': True,
     'application': True,
     'license': 'LGPL-3',
+    'assets': {
+        'web.assets_frontend': [
+            'dental_lab/static/src/js/dental_lab_portal.js',
+        ],
+    },
 }

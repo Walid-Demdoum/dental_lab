@@ -15,6 +15,85 @@
         
     </template>
 
+    <!-- Order lines -->
+    <template id="portal_dental_order_lines" name="Dental Work Order Lines">
+        <div class="col-12">
+            <label class="form-label fw-bold">Work Details</label>
+            <div id="dental-lines-container">
+                <t t-if="order">
+                    <t t-foreach="order.work_order_line_ids" t-as="line" t-key="line.id">
+                        <div class="row g-2 align-items-end dental-line-row border rounded p-2 mb-2">
+                            <div class="col-md-2">
+                                <label class="form-label">Teeth</label>
+                                <input type="text" class="form-control" required="required"
+                                    t-attf-name="lines-#{line_index}-teeth" t-att-value="line.teeth"/>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Work Type</label>
+                                <select class="form-select" required="required" t-attf-name="lines-#{line_index}-work_type">
+                                    <option value="">-- Select --</option>
+                                    <option value="zircon" t-att-selected="'selected' if line.work_type == 'zircon' else None">Zircon</option>
+                                    <option value="ccm" t-att-selected="'selected' if line.work_type == 'ccm' else None">CCM</option>
+                                    <option value="ceramic_metal" t-att-selected="'selected' if line.work_type == 'ceramic_metal' else None">Metal-Ceramic</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Description</label>
+                                <input type="text" class="form-control" t-attf-name="lines-#{line_index}-description" t-att-value="line.description"/>
+                            </div>
+                            <div class="col-md-1">
+                                <label class="form-label">Qty</label>
+                                <input type="number" min="1" class="form-control" t-attf-name="lines-#{line_index}-quantity" t-att-value="line.quantity"/>
+                            </div>
+                            <div class="col-md-2 form-check pt-4">
+                                <input type="checkbox" class="form-check-input" t-attf-id="implant-#{line_index}"
+                                    t-attf-name="lines-#{line_index}-is_implant" t-att-checked="'checked' if line.is_implant else None"/>
+                                <label class="form-check-label" t-attf-for="implant-#{line_index}">Implant</label>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-outline-danger btn-sm dental-remove-line"><i class="fa fa-trash"/></button>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+                <t t-else="">
+                    <div class="row g-2 align-items-end dental-line-row border rounded p-2 mb-2">
+                        <div class="col-md-2">
+                            <label class="form-label">Teeth</label>
+                            <input type="text" class="form-control" required="required" name="lines-0-teeth"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Work Type</label>
+                            <select class="form-select" required="required" name="lines-0-work_type">
+                                <option value="">-- Select --</option>
+                                <option value="zircon">Zircon</option>
+                                <option value="ccm">CCM</option>
+                                <option value="ceramic_metal">Metal-Ceramic</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Description</label>
+                            <input type="text" class="form-control" name="lines-0-description"/>
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label">Qty</label>
+                            <input type="number" min="1" class="form-control" name="lines-0-quantity" value="1"/>
+                        </div>
+                        <div class="col-md-2 form-check pt-4">
+                            <input type="checkbox" class="form-check-input" id="implant-0" name="lines-0-is_implant"/>
+                            <label class="form-check-label" for="implant-0">Implant</label>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-outline-danger btn-sm dental-remove-line"><i class="fa fa-trash"/></button>
+                        </div>
+                    </div>
+                </t>
+            </div>
+            <button type="button" id="dental-add-line" class="btn btn-secondary btn-sm mt-1">
+                <i class="fa fa-plus"/> Add Line
+            </button>
+        </div>
+    </template>
 
     <!-- Work orders List View -->
     <template id="portal_my_dental_orders" name="My Dental Work Orders">
@@ -75,6 +154,7 @@
                 <form action="/my/dental-orders/submit" method="post" class="row g-3">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <t t-call="dental_lab.portal_dental_order_form_fields"/>
+                    <t t-call="dental_lab.portal_dental_order_lines"/>
                     <div class="col-12">
                         <a href="/my/dental-orders" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">Submit Work Order</button>
@@ -94,6 +174,7 @@
                 <form t-attf-action="/my/dental-orders/#{order.id}/update" method="post" class="row g-3">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <t t-call="dental_lab.portal_dental_order_form_fields"/>
+                    <t t-call="dental_lab.portal_dental_order_lines"/>
                     <div class="col-12">
                         <a t-attf-href="/my/dental-orders/#{order.id}" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -120,6 +201,21 @@
                     <tr><td class="fw-bold">Due Date</td><td><span t-field="order.date_due"/></td></tr>
                     <tr><td class="fw-bold">Technician</td><td><span t-field="order.technician_id.name"/></td></tr>
                     <tr><td class="fw-bold">Notes</td><td><span t-field="order.notes"/></td></tr>
+                </table>
+                <h5 class="mt-4">Work Details</h5>
+                <table class="table table-sm table-bordered" t-if="order.work_order_line_ids">
+                    <thead>
+                        <tr><th>Teeth</th><th>Work Type</th><th>Description</th><th>Qty</th><th>Implant</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="order.work_order_line_ids" t-as="line">
+                            <td><span t-field="line.teeth"/></td>
+                            <td><span t-field="line.work_type"/></td>
+                            <td><span t-field="line.description"/></td>
+                            <td><span t-field="line.quantity"/></td>
+                            <td><t t-if="line.is_implant">Yes</t><t t-else="">No</t></td>
+                        </tr>
+                    </tbody>
                 </table>
                 <a t-if="order.state == 'draft'" t-attf-href="/my/dental-orders/#{order.id}/edit" class="btn btn-primary mt-2">
                     <i class="fa fa-pencil"/> Edit Work Order
