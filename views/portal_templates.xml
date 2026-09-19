@@ -16,7 +16,49 @@
     </template>
 
     <!-- Order lines -->
+    <!-- dental_lab/views/portal_templates.xml -->
     <template id="portal_dental_order_lines" name="Dental Work Order Lines">
+        <style>
+            .dental-tooth { min-width: 34px; }
+            .dental-midline { width: 1px; align-self: stretch; background-color: #adb5bd; margin: 0 4px; }
+            #dental-odontogram-chart { overflow-x: auto; }
+            .dental-tooth { min-width: 34px; }
+            .dental-midline { width: 1px; align-self: stretch; background-color: #adb5bd; margin: 0 4px; }
+            #dental-odontogram-chart { overflow-x: auto; text-align: center; }
+            .dental-odontogram-svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+            .dental-tooth { cursor: pointer; }
+            .dental-tooth .dental-tooth-shape rect,
+            .dental-tooth .dental-tooth-shape polygon {
+                fill: #e9ecef;
+                stroke: #6c757d;
+                stroke-width: 1.5;
+                transition: fill 0.15s ease, stroke 0.15s ease;
+            }
+            .dental-tooth:hover .dental-tooth-shape rect,
+            .dental-tooth:hover .dental-tooth-shape polygon {
+                stroke: #0d6efd;
+            }
+            .dental-tooth.active .dental-tooth-shape rect,
+            .dental-tooth.active .dental-tooth-shape polygon {
+                fill: #0d6efd;
+                stroke: #0a58ca;
+            }
+            .dental-tooth-label {
+                font-size: 11px;
+                fill: #495057;
+                pointer-events: none;
+                user-select: none;
+            }
+            .dental-tooth.active .dental-tooth-label {
+                fill: #0d6efd;
+                font-weight: 600;
+            }
+            .dental-midline-guide {
+                stroke: #ced4da;
+                stroke-dasharray: 4 3;
+                stroke-width: 1;
+            }
+        </style>
         <div class="col-12">
             <label class="form-label fw-bold">Work Details</label>
             <div id="dental-lines-container">
@@ -26,8 +68,10 @@
                             <input type="hidden" t-attf-name="lines-#{line_index}-line_id" t-att-value="line.id"/>
                             <div class="col-md-2">
                                 <label class="form-label">Teeth</label>
-                                <input type="text" class="form-control" required="required"
+                                <input type="text" class="form-control dental-teeth-input" readonly="readonly"
+                                    required="required" placeholder="Select..."
                                     t-attf-name="lines-#{line_index}-teeth" t-att-value="line.teeth"/>
+                                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mt-1 dental-select-teeth">Select</button>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Work Type</label>
@@ -61,7 +105,9 @@
                     <div class="row g-2 align-items-end dental-line-row border rounded p-2 mb-2">
                         <div class="col-md-2">
                             <label class="form-label">Teeth</label>
-                            <input type="text" class="form-control" required="required" name="lines-0-teeth"/>
+                            <input type="text" class="form-control dental-teeth-input" readonly="readonly"
+                                required="required" placeholder="Select..." name="lines-0-teeth"/>
+                            <button type="button" class="btn btn-outline-secondary btn-sm w-100 mt-1 dental-select-teeth">Select</button>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Work Type</label>
@@ -94,7 +140,28 @@
                 <i class="fa fa-plus"/> Add Line
             </button>
         </div>
+
+        <!-- Shared odontogram modal (built once per page, reused by every line's Select button) -->
+        <div class="modal fade" id="dental-odontogram-modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Select Teeth (FDI)</h5>
+                        <button type="button" class="btn-close dental-odontogram-close" aria-label="Close"/>
+                    </div>
+                    <div class="modal-body">
+                        <div id="dental-odontogram-chart"/>
+                        <p class="text-muted small mt-2 mb-0">Selected: <span id="dental-odontogram-selected">None</span></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary dental-odontogram-close">Cancel</button>
+                        <button type="button" id="dental-odontogram-apply" class="btn btn-primary">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </template>
+    
 
     <!-- Work orders List View -->
     <template id="portal_my_dental_orders" name="My Dental Work Orders">
