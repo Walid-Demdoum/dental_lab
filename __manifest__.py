@@ -18,6 +18,7 @@
         'views/dental_lab_order_views.xml',
         'views/dental_lab_menus.xml',
         'views/portal_templates.xml',
+        'views/res_partner_view.xml',
     ],
     'installable': True,
     'application': True,
