@@ -36,28 +36,28 @@
                     </div>
                     <group>
                         <group>
-                            <field name="partner_id"/>
-                            <field name="patient_name"/>
-                            <field name="ref" />
-                            <field name="technician_id"/>
+                            <field name="partner_id" readonly="state != 'draft'" domain="[('partner_type','=','dentist')]" options="{'no_quick_create': True,'no_create':True}"/>
+                            <field name="patient_name" readonly="state != 'draft'"/>
+                            <field name="ref" readonly="state != 'draft'"/>
+                            <field name="technician_id" readonly="state != 'draft'" domain="[('partner_type','=','tech')]" options="{'no_quick_create': True,'no_create':True}"/>
                         </group>
                         <group>
-                            <field name="date_order"/>
-                            <field name="date_due"/>
-                            <field name="priority" widget="priority"/>
+                            <field name="date_order" readonly="state != 'draft'"/>
+                            <field name="date_due" readonly="state != 'draft'"/>
+                            <field name="priority" widget="priority" readonly="state != 'draft'"/>
                         </group>
                     </group>
                     <group>
                         <group>
-                            <field name="shade"/>
+                            <field name="shade" readonly="state != 'draft'"/>
                         </group>
                     </group>
                     <group>
-                        <field name="notes" placeholder="Special instructions from the dentist..."/>
+                        <field name="notes" placeholder="Special instructions from the dentist..." readonly="state != 'draft'"/>
                     </group>
                     <notebook>
                         <page name="work_lines" string="Work Lines">
-                            <field name="work_order_line_ids">
+                            <field name="work_order_line_ids" readonly="state != 'draft'">
                                 <list editable="bottom">
                                     <field name="currency_id" column_invisible="1" readonly="1"/>
                                     <field name="work_order_id" readonly="1" column_invisible="1"/>
