@@ -88,7 +88,7 @@
                             </div>
                             <div class="col-md-1">
                                 <label class="form-label">Qty</label>
-                                <input type="number" min="1" class="form-control" t-attf-name="lines-#{line_index}-quantity" t-att-value="line.quantity"/>
+                                <input type="number" min="1" class="form-control dental-quantity-input" readonly="readonly" t-attf-name="lines-#{line_index}-quantity" t-att-value="line.quantity"/>
                             </div>
                             <div class="col-md-2 form-check pt-4">
                                 <input type="checkbox" class="form-check-input" t-attf-id="implant-#{line_index}"
@@ -124,7 +124,7 @@
                         </div>
                         <div class="col-md-1">
                             <label class="form-label">Qty</label>
-                            <input type="number" min="1" class="form-control" name="lines-0-quantity" value="1"/>
+                            <input type="number" min="1" class="form-control dental-quantity-input" readonly="readonly" name="lines-0-quantity" value="1"/>
                         </div>
                         <div class="col-md-2 form-check pt-4">
                             <input type="checkbox" class="form-check-input" id="implant-0" name="lines-0-is_implant"/>

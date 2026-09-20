@@ -186,6 +186,7 @@ function initOdontogramModal() {
         if (currentTeethInput) {
             currentTeethInput.value = getSelectedTeeth(chart).join(', ');
             currentTeethInput.dispatchEvent(new Event('change'));
+            syncRowQuantity(currentTeethInput.closest('.dental-line-row'));
         }
         hideOdontogramModal(modalEl);
     });
@@ -197,13 +198,23 @@ function initOdontogramModal() {
     });
 }
 
+function syncRowQuantity(row) {
+    var teethInput = row.querySelector('.dental-teeth-input');
+    var qtyInput = row.querySelector('.dental-quantity-input');
+    if (!teethInput || !qtyInput) {
+        return;
+    }
+    var teeth = (teethInput.value || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+    qtyInput.value = teeth.length;
+}
+
 function initDentalLines() {
     var container = document.getElementById('dental-lines-container');
     var addBtn = document.getElementById('dental-add-line');
     if (!container || !addBtn) {
         return;
     }
-
+    Array.prototype.slice.call(container.querySelectorAll('.dental-line-row')).forEach(syncRowQuantity);
     var nextIndex = container.querySelectorAll('.dental-line-row').length;
 
     function buildRow(index) {
@@ -230,7 +241,7 @@ function initDentalLines() {
             '</div>' +
             '<div class="col-md-1">' +
                 '<label class="form-label">Qty</label>' +
-                '<input type="number" min="1" class="form-control" name="lines-' + index + '-quantity" value="1"/>' +
+                '<input type="number" min="1" class="form-control dental-quantity-input" readonly="readonly" name="lines-' + index + '-quantity" value="1"/>' +
             '</div>' +
             '<div class="col-md-2 form-check pt-4">' +
                 '<input type="checkbox" class="form-check-input" id="implant-' + index + '" name="lines-' + index + '-is_implant"/>' +
