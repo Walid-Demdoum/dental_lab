@@ -39,4 +39,29 @@
         <field name="perm_create">1</field>
         <field name="perm_unlink">1</field>
     </record>
+
+    <!-- Portal dentist: only lines belonging to their own orders -->
+    <record id="dental_lab_order_line_portal_rule" model="ir.rule">
+        <field name="name">Dental Lab Order Line: Portal Dentist - Own Order Lines Only</field>
+        <field name="model_id" ref="model_dental_order_line"/>
+        <field name="domain_force">[('work_order_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+    </record>
+
+    <!-- Technician/Manager: full visibility on all lines -->
+    <record id="dental_lab_order_line_technician_rule" model="ir.rule">
+        <field name="name">Dental Lab Order Line: Technician/Manager - All Lines</field>
+        <field name="model_id" ref="model_dental_order_line"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_dental_lab_technician'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+    </record>
+
 </odoo>
