@@ -8,7 +8,7 @@ class ResPartner(models.Model):
     partner_type = fields.Selection(string="Type",selection=PARTNER_TYPE,default='dentist')
     is_dentist = fields.Boolean(string="Is dentist",compute="_compute_partner_type")
     is_technician = fields.Boolean(string="Is technician",compute="_compute_partner_type")
-
+    work_order_ids = fields.One2many('dental.lab.order','partner_id',string="Work order lines")
 
     @api.depends('partner_type')
     def _compute_partner_type(self):

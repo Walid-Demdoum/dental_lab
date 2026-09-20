@@ -13,6 +13,11 @@
                     </div>
                 </group>
             </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page name="work_orders" string="Work Orders">
+                    <field name="work_order_ids" readonly="1"/>
+                </page>
+            </xpath>
         </field>
     </record>
 
