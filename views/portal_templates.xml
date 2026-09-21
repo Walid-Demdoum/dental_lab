@@ -402,13 +402,13 @@
                     </div>
 
                     <div class="o_dl_notebook">
-                        <ul class="nav o_dl_notebook_tabs">
+                        <ul class="nav o_dl_notebook_tabs flex-row flex-nowrap">
                             <li class="nav-item"><span class="nav-link active">Work Lines</span></li>
                         </ul>
                         <div class="o_dl_list_wrapper">
                             <table class="o_dl_list_table" t-if="order.work_order_line_ids">
                                 <thead>
-                                    <tr class="work_line_tr">
+                                    <tr>
                                         <th>Teeth</th>
                                         <th>Work Type</th>
                                         <th>Description</th>

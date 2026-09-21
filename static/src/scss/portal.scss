@@ -7,7 +7,7 @@
 
 .o_dl_form_view {
     --dl-primary: var(--bs-primary, #714b67);
-    --dl-border: #d8dadd;
+    --dl-border: #c2c4c7;
     --dl-bg: #f9fafb;
     --dl-muted: #6c757d;
 
@@ -328,11 +328,19 @@ textarea.o_dl_input {
         white-space: nowrap;
         text-align: left;
         border-bottom: 1px solid #adb5bd;
+        border-right: 1px dashed #adb5bd;
+        background-color: #eaeaea;
+        &:first-child { border-left: 1px solid #adb5bd; }
+        &:last-child { border-right: 1px solid #adb5bd; }
     }
     td {
         padding: .5rem;
         vertical-align: middle;
+        border-right: 1px dashed #adb5bd31;
         border-bottom: 1px solid var(--dl-border);
+        &:first-child { border-left: 1px solid #adb5bd; }
+        &:last-child { border-right: 1px solid #adb5bd; }
+
     }
     tbody tr:hover { background: rgba(0, 0, 0, .025); }
     .o_dl_col_num { text-align: right; }
