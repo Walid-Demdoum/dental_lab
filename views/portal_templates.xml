@@ -261,7 +261,7 @@
             <t t-set="additional_title" t-value="order.name"/>
             <div class="o_portal_my_doc_book_container">
                 <h3>
-                    Work Order <span t-field="order.name"/>
+                    <span t-field="order.name"/>
                     <span t-field="order.state" t-attf-class="badge float-end #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
                 </h3>
                 <table class="table table-borderless">
@@ -350,7 +350,7 @@
                 </ul>
             </t>
             <input type="file" class="form-control" name="attachments" multiple="multiple" accept=".stl,.obj,.rar,.zip"/>
-            <div class="form-text">JPEG, PNG, WEBP or PDF, up to 50 MB each.</div>
+            <div class="form-text">STL, OBJ, ZIP or RAR, up to 50 MB each.</div>
         </div>
     </template>
 </odoo>
