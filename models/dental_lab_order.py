@@ -27,6 +27,7 @@ class DentalLabOrder(models.Model):
     date_due = fields.Date(string='Due Date', tracking=True)
     priority = fields.Selection(selection=[('0', 'Normal'), ('1', 'Urgent')],string='Priority',default='0')
     technician_id = fields.Many2one('res.users',string='Assigned Technician',tracking=True)
+    attachment_ids = fields.One2many('ir.attachment', 'res_id', string='Scans',domain=lambda self: [('res_model', '=', self._name)],)
     notes = fields.Text(string='Instructions / Notes')
 
     currency_id = fields.Many2one('res.currency',string="Currency",default=lambda self:self.env.company.currency_id.id)

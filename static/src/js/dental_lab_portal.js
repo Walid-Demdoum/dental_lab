@@ -208,6 +208,34 @@ function syncRowQuantity(row) {
     qtyInput.value = teeth.length;
 }
 
+function initAttachments() {
+    var section = document.querySelector('.dental-attachments');
+    if (!section) {
+        return;
+    }
+    var orderId = section.dataset.orderId;
+    var form = section.closest('form');
+    var csrfInput = form && form.querySelector('input[name="csrf_token"]');
+
+    section.addEventListener('click', function (ev) {
+        var delBtn = ev.target.closest('.dental-remove-attachment');
+        if (!delBtn || !orderId || orderId === '0' || !csrfInput) {
+            return;
+        }
+        var formData = new FormData();
+        formData.append('csrf_token', csrfInput.value);
+        fetch('/my/dental-orders/' + orderId + '/attachment/' + delBtn.dataset.attachmentId + '/delete', {
+            method: 'POST',
+            body: formData,
+        }).then(function (resp) {
+            if (resp.ok) {
+                delBtn.closest('li').remove();
+            }
+        });
+    });
+}
+
+
 function initDentalLines() {
     var container = document.getElementById('dental-lines-container');
     var addBtn = document.getElementById('dental-add-line');
@@ -296,6 +324,7 @@ function initDentalLines() {
 function initDentalLab() {
     initDentalLines();
     initOdontogramModal();
+    initAttachments();
 }
 
 if (document.readyState === 'loading') {

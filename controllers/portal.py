@@ -2,11 +2,14 @@ from odoo import http, _
 from odoo.exceptions import AccessError, MissingError
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
+import base64
 import logging
 import re
 
 class DentalLabPortal(CustomerPortal):
     
+    ALLOWED_ATTACHMENT_MIMETYPES = {'application/pdf'}
+    MAX_ATTACHMENT_SIZE = 50 * 1024 * 1024  # 50 MB
     LINE_FIELD_RE = re.compile(r'^lines-(\d+)-work_type$')
 
     def _prepare_line_commands(self, post, existing_line_ids=None):
@@ -64,6 +67,24 @@ class DentalLabPortal(CustomerPortal):
         return self._get_page_view_values(
             order, access_token, values, 'my_dental_orders_history', False, **kwargs
         )
+
+    def _create_order_attachments(self, order_sudo, files):
+        Attachment = request.env['ir.attachment'].sudo()
+        for file in files:
+            if not file or not file.filename:
+                continue
+            content = file.read()
+            if not content or len(content) > self.MAX_ATTACHMENT_SIZE:
+                continue
+            if (file.content_type or '') not in self.ALLOWED_ATTACHMENT_MIMETYPES:
+                continue
+            Attachment.create({
+                'name': file.filename,
+                'datas': base64.b64encode(content),
+                'res_model': 'dental.lab.order',
+                'res_id': order_sudo.id,
+                'public': False,
+            })
 
     @http.route(['/my/dental-orders', '/my/dental-orders/page/<int:page>'], type='http', auth='user', website=True)
     def portal_my_dental_orders(self, page=1, sortby=None, filterby=None, **kw):
@@ -126,6 +147,7 @@ class DentalLabPortal(CustomerPortal):
             'work_order_line_ids': self._prepare_line_commands(post),
         }
         order = request.env['dental.lab.order'].sudo().create(vals)
+        self._create_order_attachments(order, request.httprequest.files.getlist('attachments'))
         return request.redirect('/my/dental-orders/%s' % order.id)
 
     @http.route(['/my/dental-orders/<int:order_id>'], type='http', auth='user', website=True)
@@ -173,4 +195,19 @@ class DentalLabPortal(CustomerPortal):
             'work_order_line_ids': self._prepare_line_commands(post, existing_line_ids=order_sudo.work_order_line_ids.ids),
         }
         order_sudo.write(vals)
+        self._create_order_attachments(order_sudo, request.httprequest.files.getlist('attachments'))
         return request.redirect('/my/dental-orders/%s' % order_sudo.id)
+
+    #Attachement delete route
+    @http.route(['/my/dental-orders/<int:order_id>/attachment/<int:attachment_id>/delete'], type='http', auth='user', website=True, methods=['POST'], csrf=True)
+    def portal_dental_order_attachment_delete(self, order_id, attachment_id, **post):
+        try:
+            order_sudo = self._document_check_access('dental.lab.order', order_id)
+        except (AccessError, MissingError):
+            return request.make_json_response({'error': 'access_denied'}, status=403)
+
+        attachment_sudo = request.env['ir.attachment'].sudo().browse(attachment_id)
+        if attachment_sudo.exists() and attachment_sudo.res_model == 'dental.lab.order' and attachment_sudo.res_id == order_sudo.id:
+            attachment_sudo.unlink()
+            return request.make_json_response({'success': True})
+        return request.make_json_response({'error': 'not_found'}, status=404)

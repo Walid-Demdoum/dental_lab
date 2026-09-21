@@ -223,6 +223,7 @@
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <t t-call="dental_lab.portal_dental_order_form_fields"/>
                     <t t-call="dental_lab.portal_dental_order_lines"/>
+                    <t t-call="dental_lab.portal_dental_order_attachments"/>
                     <div class="col-12">
                         <a href="/my/dental-orders" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">Submit Work Order</button>
@@ -239,10 +240,11 @@
             <t t-set="additional_title" t-value="order.name"/>
             <div class="o_portal_my_doc_book_container">
                 <h3>Edit Work Order <span t-field="order.name"/></h3>
-                <form t-attf-action="/my/dental-orders/#{order.id}/update" method="post" class="row g-3">
+                <form t-attf-action="/my/dental-orders/#{order.id}/update" method="post" enctype="multipart/form-data" class="row g-3">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <t t-call="dental_lab.portal_dental_order_form_fields"/>
                     <t t-call="dental_lab.portal_dental_order_lines"/>
+                    <t t-call="dental_lab.portal_dental_order_attachments"/>
                     <div class="col-12">
                         <a t-attf-href="/my/dental-orders/#{order.id}" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -288,6 +290,14 @@
                 <a t-if="order.state == 'draft'" t-attf-href="/my/dental-orders/#{order.id}/edit" class="btn btn-primary mt-2">
                     <i class="fa fa-pencil"/> Edit Work Order
                 </a>
+                <h5 class="mt-4">X-Rays / Scans</h5>
+                <ul class="list-group" t-if="order.attachment_ids">
+                    <li t-foreach="order.attachment_ids" t-as="attachment" class="list-group-item">
+                        <a t-attf-href="/web/content/#{attachment.id}?download=true" target="_blank">
+                            <i class="fa fa-paperclip me-1"/><t t-esc="attachment.name"/>
+                        </a>
+                    </li>
+                </ul>
             </div>
         </t>
     </template>
@@ -321,5 +331,26 @@
         </div>
     </template>
 
-    
+    <!-- Attachement template -->
+    <template id="portal_dental_order_attachments" name="Dental Work Order Attachments">
+        <div class="col-12 dental-attachments" t-att-data-order-id="order.id if order else 0">
+            <label class="form-label fw-bold">X-Rays / Scans</label>
+            <t t-if="order and order.attachment_ids">
+                <ul class="list-group mb-2">
+                    <li t-foreach="order.attachment_ids" t-as="attachment"
+                        class="list-group-item d-flex justify-content-between align-items-center">
+                        <a t-attf-href="/web/content/#{attachment.id}?download=true" target="_blank">
+                            <i class="fa fa-paperclip me-1"/><t t-esc="attachment.name"/>
+                        </a>
+                        <button type="button" class="btn btn-outline-danger btn-sm dental-remove-attachment"
+                                t-att-data-attachment-id="attachment.id">
+                            <i class="fa fa-trash"/>
+                        </button>
+                    </li>
+                </ul>
+            </t>
+            <input type="file" class="form-control" name="attachments" multiple="multiple" accept="image/jpeg,image/png,image/webp,application/pdf"/>
+            <div class="form-text">JPEG, PNG, WEBP or PDF, up to 10 MB each.</div>
+        </div>
+    </template>
 </odoo>
