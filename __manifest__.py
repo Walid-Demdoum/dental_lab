@@ -26,6 +26,7 @@
     'assets': {
         'web.assets_frontend': [
             'dental_lab/static/src/js/dental_lab_portal.js',
+            'dental_lab/static/src/scss/portal.scss',
         ],
     },
 }

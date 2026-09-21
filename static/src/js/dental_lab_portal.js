@@ -247,36 +247,42 @@ function initDentalLines() {
 
     function buildRow(index) {
         var row = document.createElement('div');
-        row.className = 'row g-2 align-items-end dental-line-row border rounded p-2 mb-2';
+        row.className = 'o_dl_line dental-line-row';
         row.innerHTML =
-            '<div class="col-md-2">' +
-                '<label class="form-label">Teeth</label>' +
-                '<input type="text" class="form-control dental-teeth-input" readonly="readonly" required="required" placeholder="Select..." name="lines-' + index + '-teeth"/>' +
-                '<button type="button" class="btn btn-outline-secondary btn-sm w-100 mt-1 dental-select-teeth">Select</button>' +
+            '<div class="o_dl_cell">' +
+                '<span class="o_dl_cell_label">Teeth</span>' +
+                '<div class="o_dl_teeth">' +
+                    '<input type="text" class="o_dl_input dental-teeth-input" readonly="readonly" required="required" placeholder="Select..." name="lines-' + index + '-teeth"/>' +
+                    '<button type="button" class="btn btn-sm btn-light border dental-select-teeth" title="Select teeth">' +
+                        '<img src="/dental_lab/static/src/img/tooth.svg" alt="" width="18" height="18"/>' +
+                    '</button>' +
+                '</div>' +
             '</div>' +
-            '<div class="col-md-3">' +
-                '<label class="form-label">Work Type</label>' +
-                '<select class="form-select" required="required" name="lines-' + index + '-work_type">' +
+            '<div class="o_dl_cell">' +
+                '<span class="o_dl_cell_label">Work Type</span>' +
+                '<select class="form-select o_dl_input" required="required" name="lines-' + index + '-work_type">' +
                     '<option value="">-- Select --</option>' +
                     '<option value="zircon">Zircon</option>' +
                     '<option value="ccm">CCM</option>' +
                     '<option value="ceramic_metal">Metal-Ceramic</option>' +
                 '</select>' +
             '</div>' +
-            '<div class="col-md-3">' +
-                '<label class="form-label">Description</label>' +
-                '<input type="text" class="form-control" name="lines-' + index + '-description"/>' +
+            '<div class="o_dl_cell">' +
+                '<span class="o_dl_cell_label">Description</span>' +
+                '<input type="text" class="o_dl_input" name="lines-' + index + '-description"/>' +
             '</div>' +
-            '<div class="col-md-1">' +
-                '<label class="form-label">Qty</label>' +
-                '<input type="number" min="1" class="form-control dental-quantity-input" readonly="readonly" name="lines-' + index + '-quantity" value="1"/>' +
+            '<div class="o_dl_cell">' +
+                '<span class="o_dl_cell_label">Qty</span>' +
+                '<input type="number" min="1" class="o_dl_input text-md-end dental-quantity-input" readonly="readonly" name="lines-' + index + '-quantity" value="1"/>' +
             '</div>' +
-            '<div class="col-md-2 form-check pt-4">' +
-                '<input type="checkbox" class="form-check-input" id="implant-' + index + '" name="lines-' + index + '-is_implant"/>' +
-                '<label class="form-check-label" for="implant-' + index + '">Implant</label>' +
+            '<div class="o_dl_cell">' +
+                '<span class="o_dl_cell_label">Implant</span>' +
+                '<div class="form-check form-switch o_dl_switch_wrap">' +
+                    '<input type="checkbox" role="switch" class="form-check-input" id="implant-' + index + '" name="lines-' + index + '-is_implant"/>' +
+                '</div>' +
             '</div>' +
-            '<div class="col-md-1">' +
-                '<button type="button" class="btn btn-outline-danger btn-sm dental-remove-line"><i class="fa fa-trash"></i></button>' +
+            '<div class="o_dl_cell">' +
+                '<button type="button" class="btn btn-link o_dl_remove dental-remove-line" title="Delete line"><i class="fa fa-trash-o"></i></button>' +
             '</div>';
         return row;
     }
@@ -287,9 +293,11 @@ function initDentalLines() {
     });
 
     container.addEventListener('click', function (ev) {
-        var selectBtn = ev.target.closest('.dental-select-teeth');
-        if (selectBtn) {
-            openOdontogramModal(selectBtn.closest('.dental-line-row').querySelector('.dental-teeth-input'));
+        // Clicking the teeth input or the tooth button opens the odontogram
+        var trigger = ev.target.closest('.dental-select-teeth, .dental-teeth-input');
+        if (trigger) {
+            var teethRow = trigger.closest('.dental-line-row');
+            openOdontogramModal(teethRow.querySelector('.dental-teeth-input'));
             return;
         }
         var removeBtn = ev.target.closest('.dental-remove-line');

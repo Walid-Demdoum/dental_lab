@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Portal access menu -->
+    <!-- ===================================================================== -->
+    <!-- Portal home tile (unchanged)                                          -->
+    <!-- ===================================================================== -->
     <template id="portal_my_home_dental_order" name="Show Dental Orders on Home" customize_show="True" inherit_id="portal.portal_my_home" priority="50">
         <div id="portal_client_category" position="inside">
             <t t-call="portal.portal_docs_entry">
@@ -12,158 +14,11 @@
                 <t t-set="placeholder_count" t-value="'dental_order_count'"/>
             </t>
         </div>
-        
     </template>
 
-    <!-- Order lines -->
-    <!-- dental_lab/views/portal_templates.xml -->
-    <template id="portal_dental_order_lines" name="Dental Work Order Lines">
-        <style>
-            .dental-tooth { min-width: 34px; }
-            .dental-midline { width: 1px; align-self: stretch; background-color: #adb5bd; margin: 0 4px; }
-            #dental-odontogram-chart { overflow-x: auto; }
-            .dental-tooth { min-width: 34px; }
-            .dental-midline { width: 1px; align-self: stretch; background-color: #adb5bd; margin: 0 4px; }
-            #dental-odontogram-chart { overflow-x: auto; text-align: center; }
-            .dental-odontogram-svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-            .dental-tooth { cursor: pointer; }
-            .dental-tooth .dental-tooth-shape rect,
-            .dental-tooth .dental-tooth-shape polygon {
-                fill: #e9ecef;
-                stroke: #6c757d;
-                stroke-width: 1.5;
-                transition: fill 0.15s ease, stroke 0.15s ease;
-            }
-            .dental-tooth:hover .dental-tooth-shape rect,
-            .dental-tooth:hover .dental-tooth-shape polygon {
-                stroke: #0d6efd;
-            }
-            .dental-tooth.active .dental-tooth-shape rect,
-            .dental-tooth.active .dental-tooth-shape polygon {
-                fill: #0d6efd;
-                stroke: #0a58ca;
-            }
-            .dental-tooth-label {
-                font-size: 11px;
-                fill: #495057;
-                pointer-events: none;
-                user-select: none;
-            }
-            .dental-tooth.active .dental-tooth-label {
-                fill: #0d6efd;
-                font-weight: 600;
-            }
-            .dental-midline-guide {
-                stroke: #ced4da;
-                stroke-dasharray: 4 3;
-                stroke-width: 1;
-            }
-        </style>
-        <div class="col-12">
-            <label class="form-label fw-bold">Work Details</label>
-            <div id="dental-lines-container">
-                <t t-if="order">
-                    <t t-foreach="order.work_order_line_ids" t-as="line" t-key="line.id">
-                        <div class="row g-2 align-items-end dental-line-row border rounded p-2 mb-2">
-                            <input type="hidden" t-attf-name="lines-#{line_index}-line_id" t-att-value="line.id"/>
-                            <div class="col-md-2">
-                                <label class="form-label">Teeth</label>
-                                <input type="text" class="form-control dental-teeth-input" readonly="readonly"
-                                    required="required" placeholder="Select..."
-                                    t-attf-name="lines-#{line_index}-teeth" t-att-value="line.teeth"/>
-                                <button type="button" class="btn btn-outline-secondary btn-sm w-100 mt-1 dental-select-teeth">Select</button>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Work Type</label>
-                                <select class="form-select" required="required" t-attf-name="lines-#{line_index}-work_type">
-                                    <option value="">-- Select --</option>
-                                    <option value="zircon" t-att-selected="'selected' if line.work_type == 'zircon' else None">Zircon</option>
-                                    <option value="ccm" t-att-selected="'selected' if line.work_type == 'ccm' else None">CCM</option>
-                                    <option value="ceramic_metal" t-att-selected="'selected' if line.work_type == 'ceramic_metal' else None">Metal-Ceramic</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Description</label>
-                                <input type="text" class="form-control" t-attf-name="lines-#{line_index}-description" t-att-value="line.description"/>
-                            </div>
-                            <div class="col-md-1">
-                                <label class="form-label">Qty</label>
-                                <input type="number" min="1" class="form-control dental-quantity-input" readonly="readonly" t-attf-name="lines-#{line_index}-quantity" t-att-value="line.quantity"/>
-                            </div>
-                            <div class="col-md-2 form-check pt-4">
-                                <input type="checkbox" class="form-check-input" t-attf-id="implant-#{line_index}"
-                                    t-attf-name="lines-#{line_index}-is_implant" t-att-checked="'checked' if line.is_implant else None"/>
-                                <label class="form-check-label" t-attf-for="implant-#{line_index}">Implant</label>
-                            </div>
-                            <div class="col-md-1">
-                                <button type="button" class="btn btn-outline-danger btn-sm dental-remove-line"><i class="fa fa-trash"/></button>
-                            </div>
-                        </div>
-                    </t>
-                </t>
-                <t t-else="">
-                    <div class="row g-2 align-items-end dental-line-row border rounded p-2 mb-2">
-                        <div class="col-md-2">
-                            <label class="form-label">Teeth</label>
-                            <input type="text" class="form-control dental-teeth-input" readonly="readonly"
-                                required="required" placeholder="Select..." name="lines-0-teeth"/>
-                            <button type="button" class="btn btn-outline-secondary btn-sm w-100 mt-1 dental-select-teeth">Select</button>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Work Type</label>
-                            <select class="form-select" required="required" name="lines-0-work_type">
-                                <option value="">-- Select --</option>
-                                <option value="zircon">Zircon</option>
-                                <option value="ccm">CCM</option>
-                                <option value="ceramic_metal">Metal-Ceramic</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Description</label>
-                            <input type="text" class="form-control" name="lines-0-description"/>
-                        </div>
-                        <div class="col-md-1">
-                            <label class="form-label">Qty</label>
-                            <input type="number" min="1" class="form-control dental-quantity-input" readonly="readonly" name="lines-0-quantity" value="1"/>
-                        </div>
-                        <div class="col-md-2 form-check pt-4">
-                            <input type="checkbox" class="form-check-input" id="implant-0" name="lines-0-is_implant"/>
-                            <label class="form-check-label" for="implant-0">Implant</label>
-                        </div>
-                        <div class="col-md-1">
-                            <button type="button" class="btn btn-outline-danger btn-sm dental-remove-line"><i class="fa fa-trash"/></button>
-                        </div>
-                    </div>
-                </t>
-            </div>
-            <button type="button" id="dental-add-line" class="btn btn-secondary btn-sm mt-1">
-                <i class="fa fa-plus"/> Add Line
-            </button>
-        </div>
-
-        <!-- Shared odontogram modal (built once per page, reused by every line's Select button) -->
-        <div class="modal fade" id="dental-odontogram-modal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Select Teeth (FDI)</h5>
-                        <button type="button" class="btn-close dental-odontogram-close" aria-label="Close"/>
-                    </div>
-                    <div class="modal-body">
-                        <div id="dental-odontogram-chart"/>
-                        <p class="text-muted small mt-2 mb-0">Selected: <span id="dental-odontogram-selected">None</span></p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary dental-odontogram-close">Cancel</button>
-                        <button type="button" id="dental-odontogram-apply" class="btn btn-primary">Apply</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </template>
-    
-
-    <!-- Work orders List View -->
+    <!-- ===================================================================== -->
+    <!-- List view (unchanged)                                                 -->
+    <!-- ===================================================================== -->
     <template id="portal_my_dental_orders" name="My Dental Work Orders">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
@@ -208,149 +63,377 @@
                     </tr>
                 </tbody>
             </t>
-            
         </t>
     </template>
 
-    <!-- CREATE NEW RECORD VIEW -->
-    <template id="portal_dental_order_form" name="New Dental Work Order">
-        <t t-call="portal.portal_layout">
-            <t t-set="page_name" t-value="'dental_order_new'"/>
-            <t t-set="order" t-value="False"/>
-            <div class="o_portal_my_doc_book_container">
-                <h3>New Work Order</h3>
-                <form action="/my/dental-orders/submit" method="post" class="row g-3">
-                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                    <t t-call="dental_lab.portal_dental_order_form_fields"/>
-                    <t t-call="dental_lab.portal_dental_order_lines"/>
-                    <t t-call="dental_lab.portal_dental_order_attachments"/>
-                    <div class="col-12">
-                        <a href="/my/dental-orders" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Submit Work Order</button>
-                    </div>
-                </form>
-            </div>
-        </t>
+    <!-- ===================================================================== -->
+    <!-- Shared: breadcrumb (control panel)                                    -->
+    <!-- ===================================================================== -->
+    <template id="portal_dental_breadcrumb" name="Dental Work Order: Breadcrumb">
+        <nav class="o_dl_control_panel" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="/my" title="Home"><i class="fa fa-home"/></a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/my/dental-orders">Work Orders</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <t t-if="order" t-out="order.name"/>
+                    <t t-else="">New</t>
+                </li>
+            </ol>
+        </nav>
     </template>
 
-
-    <!-- EDIT EXISTING RECORD VIEW (draft only) -->
-    <template id="portal_dental_order_edit_form" name="Edit Dental Work Order">
-        <t t-call="portal.portal_layout">
-            <t t-set="additional_title" t-value="order.name"/>
-            <div class="o_portal_my_doc_book_container">
-                <h3>Edit Work Order <span t-field="order.name"/></h3>
-                <form t-attf-action="/my/dental-orders/#{order.id}/update" method="post" enctype="multipart/form-data" class="row g-3">
-                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                    <t t-call="dental_lab.portal_dental_order_form_fields"/>
-                    <t t-call="dental_lab.portal_dental_order_lines"/>
-                    <t t-call="dental_lab.portal_dental_order_attachments"/>
-                    <div class="col-12">
-                        <a t-attf-href="/my/dental-orders/#{order.id}" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        </t>
+    <!-- ===================================================================== -->
+    <!-- Shared: status bar steps                                              -->
+    <!-- ===================================================================== -->
+    <template id="portal_dental_statusbar" name="Dental Work Order: Status Bar">
+        <t t-set="dl_state" t-value="order.state if order else 'draft'"/>
+        <div class="o_dl_statusbar_status" role="group">
+            <span t-attf-class="o_dl_arrow #{'is-current' if dl_state == 'draft' else ''}">New</span>
+            <span t-attf-class="o_dl_arrow #{'is-current' if dl_state == 'in_progress' else ''}">In Progress</span>
+            <span t-attf-class="o_dl_arrow #{'is-current' if dl_state == 'done' else ''}">Done</span>
+            <span t-if="dl_state == 'cancel'" class="o_dl_arrow is-current is-cancel">Cancelled</span>
+        </div>
     </template>
 
-
-    <!-- WORK ORDER FORM VIEW -->
-    <template id="portal_dental_order_page" name="Dental Work Order">
-        <t t-call="portal.portal_layout">
-            <t t-set="additional_title" t-value="order.name"/>
-            <div class="o_portal_my_doc_book_container">
-                <h3>
-                    <span t-field="order.name"/>
-                    <span t-field="order.state" t-attf-class="badge float-end #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
-                </h3>
-                <table class="table table-borderless">
-                    <tr><td class="fw-bold">Patient</td><td><span t-field="order.patient_name"/></td></tr>
-                    <tr><td class="fw-bold">Shade</td><td><span t-field="order.shade"/></td></tr>
-                    <tr><td class="fw-bold">Order Date</td><td><span t-field="order.date_order"/></td></tr>
-                    <tr><td class="fw-bold">Due Date</td><td><span t-field="order.date_due"/></td></tr>
-                    <tr><td class="fw-bold">Technician</td><td><span t-field="order.technician_id.name"/></td></tr>
-                    <tr><td class="fw-bold">Notes</td><td><span t-field="order.notes"/></td></tr>
-                </table>
-                <h5 class="mt-4">Work Details</h5>
-                <table class="table table-sm table-bordered" t-if="order.work_order_line_ids">
-                    <thead>
-                        <tr><th>Teeth</th><th>Work Type</th><th>Description</th><th>Qty</th><th>Implant</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr t-foreach="order.work_order_line_ids" t-as="line">
-                            <td><span t-field="line.teeth"/></td>
-                            <td><span t-field="line.work_type"/></td>
-                            <td><span t-field="line.description"/></td>
-                            <td><span t-field="line.quantity"/></td>
-                            <td><t t-if="line.is_implant">Yes</t><t t-else="">No</t></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <a t-if="order.state == 'draft'" t-attf-href="/my/dental-orders/#{order.id}/edit" class="btn btn-primary mt-2">
-                    <i class="fa fa-pencil"/> Edit Work Order
-                </a>
-                <h5 class="mt-4">X-Rays / Scans</h5>
-                <ul class="list-group" t-if="order.attachment_ids">
-                    <li t-foreach="order.attachment_ids" t-as="attachment" class="list-group-item">
-                        <a t-attf-href="/web/content/#{attachment.id}?download=true" target="_blank">
-                            <i class="fa fa-paperclip me-1"/><t t-esc="attachment.name"/>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </t>
-    </template>
-
+    <!-- ===================================================================== -->
+    <!-- Shared: form fields (title + groups + notes)     EDIT AND CREATE      -->
+    <!-- ===================================================================== -->
     <template id="portal_dental_order_form_fields" name="Dental Work Order Form Fields">
-        <div class="col-md-6">
-            <label class="form-label" for="patient_name">Patient Name</label>
-            <input type="text" class="form-control" id="patient_name" name="patient_name"
-                t-att-value="order.patient_name if order else ''" required="required"/>
+        <div class="oe_title mb-3">
+            <h1 class="o_dl_title">
+                <t t-if="order" t-out="order.name"/>
+                <span t-else="" class="text-muted">New</span>
+            </h1>
         </div>
-        <div class="col-md-6">
-            <label class="form-label" for="shade">Shade / Color</label>
-            <input type="text" class="form-control" id="shade" name="shade"
-                t-att-value="order.shade if order else ''"/>
+
+        <div class="o_dl_group">
+            <!-- Left group -->
+            <div class="o_dl_inner_group">
+                <label class="o_form_label" for="patient_name">Patient Name</label>
+                <input type="text" class="o_dl_input" id="patient_name" name="patient_name"
+                       t-att-value="order.patient_name if order else ''" required="required"/>
+
+                <label class="o_form_label" for="shade">Shade / Color</label>
+                <input type="text" class="o_dl_input" id="shade" name="shade"
+                       t-att-value="order.shade if order else ''"/>
+            </div>
+
+            <!-- Right group -->
+            <div class="o_dl_inner_group">
+                <label class="o_form_label" for="date_due">Due Date</label>
+                <input type="date" class="o_dl_input" id="date_due" name="date_due"
+                       t-att-value="order.date_due if order else ''"/>
+
+                <label class="o_form_label" for="priority">Priority</label>
+                <select class="form-select o_dl_input" id="priority" name="priority">
+                    <option value="0" t-att-selected="'selected' if not order or order.priority == '0' else None">Normal</option>
+                    <option value="1" t-att-selected="'selected' if order and order.priority == '1' else None">Urgent</option>
+                </select>
+
+                <span class="o_form_label">X-Rays / Scans</span>
+                <t t-call="dental_lab.portal_dental_order_attachments"/>
+            </div>
         </div>
-        <div class="col-md-6">
-            <label class="form-label" for="date_due">Due Date</label>
-            <input type="date" class="form-control" id="date_due" name="date_due"
-                t-att-value="order.date_due if order else ''"/>
-        </div>
-        <div class="col-md-6">
-            <label class="form-label" for="priority">Priority</label>
-            <select class="form-select" id="priority" name="priority">
-                <option value="0" t-att-selected="'selected' if not order or order.priority == '0' else None">Normal</option>
-                <option value="1" t-att-selected="'selected' if order and order.priority == '1' else None">Urgent</option>
-            </select>
-        </div>
-        <div class="col-12">
-            <label class="form-label" for="notes">Instructions / Notes</label>
-            <textarea class="form-control" id="notes" name="notes" rows="4"><t t-esc="order.notes if order else ''"/></textarea>
+
+        <div class="o_dl_group o_dl_group_single">
+            <div class="o_dl_inner_group o_dl_inner_group_wide">
+                <label class="o_form_label" for="notes">Instructions / Notes</label>
+                <textarea class="o_dl_input" id="notes" name="notes" rows="4"><t t-out="order.notes if order else ''"/></textarea>
+            </div>
         </div>
     </template>
 
-    <!-- Attachement template -->
+    <!-- ===================================================================== -->
+    <!-- Shared: attachments (edit mode)                                       -->
+    <!-- ===================================================================== -->
     <template id="portal_dental_order_attachments" name="Dental Work Order Attachments">
-        <div class="col-12 dental-attachments" t-att-data-order-id="order.id if order else 0">
-            <label class="form-label fw-bold">X-Rays / Scans</label>
-            <t t-if="order and order.attachment_ids">
-                <ul class="list-group mb-2">
-                    <li t-foreach="order.attachment_ids" t-as="attachment"
-                        class="list-group-item d-flex justify-content-between align-items-center">
-                        <a t-attf-href="/web/content/#{attachment.id}?download=true" target="_blank">
-                            <i class="fa fa-paperclip me-1"/><t t-esc="attachment.name"/>
-                        </a>
-                        <button type="button" class="btn btn-outline-danger btn-sm dental-remove-attachment"
-                                t-att-data-attachment-id="attachment.id">
-                            <i class="fa fa-trash"/>
-                        </button>
-                    </li>
-                </ul>
-            </t>
-            <input type="file" class="form-control" name="attachments" multiple="multiple" accept=".stl,.obj,.rar,.zip"/>
+        <div class="dental-attachments" t-att-data-order-id="order.id if order else 0">
+            <ul t-if="order and order.attachment_ids" class="o_dl_attachments">
+                <li t-foreach="order.attachment_ids" t-as="attachment">
+                    <a t-attf-href="/web/content/#{attachment.id}?download=true" target="_blank">
+                        <i class="fa fa-paperclip me-1"/><t t-out="attachment.name"/>
+                    </a>
+                    <button type="button" class="btn btn-link o_dl_remove dental-remove-attachment"
+                            t-att-data-attachment-id="attachment.id" title="Remove file">
+                        <i class="fa fa-trash-o"/>
+                    </button>
+                </li>
+            </ul>
+            <input type="file" class="form-control form-control-sm" name="attachments" multiple="multiple" accept=".stl,.obj,.rar,.zip"/>
             <div class="form-text">STL, OBJ, ZIP or RAR, up to 50 MB each.</div>
         </div>
     </template>
+
+    <!-- ===================================================================== -->
+    <!-- Shared: one editable line row                                         -->
+    <!-- Expects: line (record or False), line_index                           -->
+    <!-- ===================================================================== -->
+    <template id="portal_dental_order_line_row" name="Dental Work Order: Editable Line">
+        <div class="o_dl_line dental-line-row">
+            <input t-if="line" type="hidden" t-attf-name="lines-#{line_index}-line_id" t-att-value="line.id"/>
+
+            <div class="o_dl_cell">
+                <span class="o_dl_cell_label">Teeth</span>
+                <div class="o_dl_teeth">
+                    <input type="text" class="o_dl_input dental-teeth-input" readonly="readonly"
+                           required="required" placeholder="Select..."
+                           t-attf-name="lines-#{line_index}-teeth" t-att-value="line.teeth if line else None"/>
+                    <button type="button" class="btn btn-sm btn-light border dental-select-teeth" title="Select teeth">
+                        <img src="/dental_lab/static/src/img/tooth.svg" alt="" width="18" height="18"/>
+                    </button>
+                </div>
+            </div>
+
+            <div class="o_dl_cell">
+                <span class="o_dl_cell_label">Work Type</span>
+                <select class="form-select o_dl_input" required="required" t-attf-name="lines-#{line_index}-work_type">
+                    <option value="">-- Select --</option>
+                    <option value="zircon" t-att-selected="'selected' if line and line.work_type == 'zircon' else None">Zircon</option>
+                    <option value="ccm" t-att-selected="'selected' if line and line.work_type == 'ccm' else None">CCM</option>
+                    <option value="ceramic_metal" t-att-selected="'selected' if line and line.work_type == 'ceramic_metal' else None">Metal-Ceramic</option>
+                </select>
+            </div>
+
+            <div class="o_dl_cell">
+                <span class="o_dl_cell_label">Description</span>
+                <input type="text" class="o_dl_input" t-attf-name="lines-#{line_index}-description"
+                       t-att-value="line.description if line else None"/>
+            </div>
+
+            <div class="o_dl_cell">
+                <span class="o_dl_cell_label">Qty</span>
+                <input type="number" min="1" class="o_dl_input text-md-end dental-quantity-input" readonly="readonly"
+                       t-attf-name="lines-#{line_index}-quantity" t-att-value="line.quantity if line else 1"/>
+            </div>
+
+            <div class="o_dl_cell">
+                <span class="o_dl_cell_label">Implant</span>
+                <div class="form-check form-switch o_dl_switch_wrap">
+                    <input type="checkbox" role="switch" class="form-check-input"
+                           t-attf-id="implant-#{line_index}" t-attf-name="lines-#{line_index}-is_implant"
+                           t-att-checked="'checked' if line and line.is_implant else None"/>
+                </div>
+            </div>
+
+            <div class="o_dl_cell">
+                <button type="button" class="btn btn-link o_dl_remove dental-remove-line" title="Delete line">
+                    <i class="fa fa-trash-o"/>
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <!-- ===================================================================== -->
+    <!-- Shared: editable lines + odontogram modal                             -->
+    <!-- ===================================================================== -->
+    <template id="portal_dental_order_lines" name="Dental Work Order Lines">
+        <div class="o_dl_lines">
+            <div class="o_dl_line o_dl_line_header">
+                <div>Teeth</div>
+                <div>Work Type</div>
+                <div>Description</div>
+                <div class="text-end">Qty</div>
+                <div class="text-center">Implant</div>
+                <div/>
+            </div>
+
+            <div id="dental-lines-container">
+                <t t-if="order and order.work_order_line_ids">
+                    <t t-foreach="order.work_order_line_ids" t-as="line">
+                        <t t-call="dental_lab.portal_dental_order_line_row"/>
+                    </t>
+                </t>
+                <t t-else="">
+                    <t t-set="line" t-value="False"/>
+                    <t t-set="line_index" t-value="0"/>
+                    <t t-call="dental_lab.portal_dental_order_line_row"/>
+                </t>
+            </div>
+
+            <button type="button" id="dental-add-line" class="btn btn-link o_dl_add_line">
+                Add a line
+            </button>
+        </div>
+
+        <!-- Shared odontogram modal (reused by every line's Select button) -->
+        <div class="modal fade" id="dental-odontogram-modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Select Teeth (FDI)</h5>
+                        <button type="button" class="btn-close dental-odontogram-close" aria-label="Close"/>
+                    </div>
+                    <div class="modal-body">
+                        <div id="dental-odontogram-chart"/>
+                        <p class="text-muted small mt-2 mb-0">Selected: <span id="dental-odontogram-selected">None</span></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="dental-odontogram-apply" class="btn btn-primary">Apply</button>
+                        <button type="button" class="btn btn-secondary dental-odontogram-close">Discard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- ===================================================================== -->
+    <!-- Shared: form view wrapper (create + edit)                             -->
+    <!-- Expects: order (record or False), form_action, discard_url,           -->
+    <!--          submit_label                                                 -->
+    <!-- ===================================================================== -->
+    <template id="portal_dental_order_form_view" name="Dental Work Order: Form (create / edit)">
+        <form t-att-action="form_action" method="post" enctype="multipart/form-data" class="o_dl_form_view o_dl_form_edit">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+            <t t-call="dental_lab.portal_dental_breadcrumb"/>
+
+            <div class="o_dl_statusbar">
+                <div class="o_dl_statusbar_buttons">
+                    <button type="submit" class="btn btn-primary"><t t-out="submit_label"/></button>
+                    <a t-att-href="discard_url" class="btn btn-secondary">Discard</a>
+                </div>
+                <t t-call="dental_lab.portal_dental_statusbar"/>
+            </div>
+
+            <div class="o_dl_form_content">
+                <t t-call="dental_lab.portal_dental_order_form_fields"/>
+
+                <div class="o_dl_notebook">
+                    <ul class="nav o_dl_notebook_tabs">
+                        <li class="nav-item"><span class="nav-link active">Work Lines</span></li>
+                    </ul>
+                    <t t-call="dental_lab.portal_dental_order_lines"/>
+                </div>
+            </div>
+        </form>
+    </template>
+
+    <!-- ===================================================================== -->
+    <!-- CREATE                                                                -->
+    <!-- ===================================================================== -->
+    <template id="portal_dental_order_form" name="New Dental Work Order">
+        <t t-call="portal.portal_layout">
+            <t t-set="page_name" t-value="'dental_order_new'"/>
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            <t t-set="order" t-value="False"/>
+            <t t-set="form_action" t-value="'/my/dental-orders/submit'"/>
+            <t t-set="discard_url" t-value="'/my/dental-orders'"/>
+            <t t-set="submit_label">Submit Work Order</t>
+            <t t-call="dental_lab.portal_dental_order_form_view"/>
+        </t>
+    </template>
+
+    <!-- ===================================================================== -->
+    <!-- EDIT (draft only)                                                     -->
+    <!-- ===================================================================== -->
+    <template id="portal_dental_order_edit_form" name="Edit Dental Work Order">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title" t-value="order.name"/>
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            <t t-set="form_action" t-value="'/my/dental-orders/%s/update' % order.id"/>
+            <t t-set="discard_url" t-value="'/my/dental-orders/%s' % order.id"/>
+            <t t-set="submit_label">Save Changes</t>
+            <t t-call="dental_lab.portal_dental_order_form_view"/>
+        </t>
+    </template>
+
+    <!-- ===================================================================== -->
+    <!-- READ-ONLY VIEW                                                        -->
+    <!-- ===================================================================== -->
+    <template id="portal_dental_order_page" name="Dental Work Order">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title" t-value="order.name"/>
+            <t t-set="no_breadcrumbs" t-value="True"/>
+
+            <div class="o_dl_form_view o_dl_form_readonly">
+                <t t-call="dental_lab.portal_dental_breadcrumb"/>
+
+                <div class="o_dl_statusbar">
+                    <div class="o_dl_statusbar_buttons">
+                        <a t-if="order.state == 'draft'" t-attf-href="/my/dental-orders/#{order.id}/edit" class="btn btn-primary">
+                            <i class="fa fa-pencil me-1"/>Edit
+                        </a>
+                    </div>
+                    <t t-call="dental_lab.portal_dental_statusbar"/>
+                </div>
+
+                <div class="o_dl_form_content">
+                    <div class="oe_title mb-3">
+                        <h1 class="o_dl_title"><span t-field="order.name"/></h1>
+                    </div>
+
+                    <div class="o_dl_group">
+                        <div class="o_dl_inner_group">
+                            <span class="o_form_label">Patient Name</span>
+                            <div class="o_dl_value"><span t-field="order.patient_name"/></div>
+
+                            <span class="o_form_label">Shade / Color</span>
+                            <div class="o_dl_value"><span t-field="order.shade"/></div>
+                        </div>
+                        <div class="o_dl_inner_group">
+                            <span class="o_form_label">Order Date</span>
+                            <div class="o_dl_value"><span t-field="order.date_order"/></div>
+
+                            <span class="o_form_label">Due Date</span>
+                            <div class="o_dl_value"><span t-field="order.date_due"/></div>
+
+                            <span class="o_form_label">X-Rays / Scans</span>
+                            <div class="o_dl_value">
+                                <ul t-if="order.attachment_ids" class="o_dl_attachments">
+                                    <li t-foreach="order.attachment_ids" t-as="attachment">
+                                        <a t-attf-href="/web/content/#{attachment.id}?download=true" target="_blank">
+                                            <i class="fa fa-paperclip me-1"/><t t-out="attachment.name"/>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="o_dl_group o_dl_group_single">
+                        <div class="o_dl_inner_group o_dl_inner_group_wide">
+                            <span class="o_form_label">Instructions / Notes</span>
+                            <div class="o_dl_value"><span t-field="order.notes"/></div>
+                        </div>
+                    </div>
+
+                    <div class="o_dl_notebook">
+                        <ul class="nav o_dl_notebook_tabs">
+                            <li class="nav-item"><span class="nav-link active">Work Lines</span></li>
+                        </ul>
+                        <div class="o_dl_list_wrapper">
+                            <table class="o_dl_list_table" t-if="order.work_order_line_ids">
+                                <thead>
+                                    <tr class="work_line_tr">
+                                        <th>Teeth</th>
+                                        <th>Work Type</th>
+                                        <th>Description</th>
+                                        <th class="o_dl_col_num">Qty</th>
+                                        <th class="o_dl_col_center">Implant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="order.work_order_line_ids" t-as="line">
+                                        <td><span t-field="line.teeth"/></td>
+                                        <td><span t-field="line.work_type"/></td>
+                                        <td><span t-field="line.description"/></td>
+                                        <td class="o_dl_col_num"><span t-field="line.quantity"/></td>
+                                        <td class="o_dl_col_center">
+                                            <i t-if="line.is_implant" class="fa fa-check text-success" title="Implant"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p t-else="" class="text-muted py-3 mb-0">No work lines.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
 </odoo>
