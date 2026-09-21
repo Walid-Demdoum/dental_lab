@@ -349,8 +349,8 @@
                     </li>
                 </ul>
             </t>
-            <input type="file" class="form-control" name="attachments" multiple="multiple" accept="image/jpeg,image/png,image/webp,application/pdf"/>
-            <div class="form-text">JPEG, PNG, WEBP or PDF, up to 10 MB each.</div>
+            <input type="file" class="form-control" name="attachments" multiple="multiple" accept=".stl,.obj,.rar,.zip"/>
+            <div class="form-text">JPEG, PNG, WEBP or PDF, up to 50 MB each.</div>
         </div>
     </template>
 </odoo>

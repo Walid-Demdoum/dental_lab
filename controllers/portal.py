@@ -1,5 +1,5 @@
 from odoo import http, _
-from odoo.exceptions import AccessError, MissingError
+from odoo.exceptions import AccessError, MissingError,UserError
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 import base64
@@ -8,7 +8,7 @@ import re
 
 class DentalLabPortal(CustomerPortal):
     
-    ALLOWED_ATTACHMENT_MIMETYPES = {'application/pdf'}
+    ALLOWED_ATTACHMENT_MIMETYPES = {'model/stl','application/x-tgif','application/zip','application/vnd.rar'}
     MAX_ATTACHMENT_SIZE = 50 * 1024 * 1024  # 50 MB
     LINE_FIELD_RE = re.compile(r'^lines-(\d+)-work_type$')
 
@@ -57,7 +57,7 @@ class DentalLabPortal(CustomerPortal):
             DentalOrder = request.env['dental.lab.order']
             values['dental_order_count'] = (
                 DentalOrder.search_count([('partner_id', '=', request.env.user.partner_id.id)])
-                if DentalOrder.check_access('read')
+                if DentalOrder.check_access_rights('read',raise_exception=False)
                 else 0
             )
         return values
@@ -76,8 +76,10 @@ class DentalLabPortal(CustomerPortal):
             content = file.read()
             if not content or len(content) > self.MAX_ATTACHMENT_SIZE:
                 continue
+                # raise UserError(_("Max allowed file size is 50mo."))
             if (file.content_type or '') not in self.ALLOWED_ATTACHMENT_MIMETYPES:
                 continue
+                # raise UserError(_("File format not allowed."))
             Attachment.create({
                 'name': file.filename,
                 'datas': base64.b64encode(content),
