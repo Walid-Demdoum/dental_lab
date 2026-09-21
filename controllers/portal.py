@@ -54,7 +54,7 @@ class DentalLabPortal(CustomerPortal):
             DentalOrder = request.env['dental.lab.order']
             values['dental_order_count'] = (
                 DentalOrder.search_count([('partner_id', '=', request.env.user.partner_id.id)])
-                if DentalOrder.check_access_rights('read', raise_exception=False)
+                if DentalOrder.check_access('read')
                 else 0
             )
         return values
