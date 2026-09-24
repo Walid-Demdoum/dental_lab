@@ -187,7 +187,6 @@
     color: var(--bs-body-color);
     background-color: transparent;
     border: 0;
-    border-bottom: 1px solid var(--dl-border);
     border-radius: 0;
     box-shadow: none;
     transition: border-color .15s ease, box-shadow .15s ease;
@@ -261,6 +260,9 @@ textarea.o_dl_input {
     padding-bottom: .5rem;
     font-weight: 600;
     border-bottom: 1px solid #adb5bd;
+    background-color: #eaeaea;
+    border-left: 1px solid #adb5bd;
+    border-right: 1px solid #adb5bd;
 
     @media (min-width: 768px) { display: grid; }
 }
