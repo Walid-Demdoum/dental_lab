@@ -34,7 +34,7 @@ class DentalLabOrder(models.Model):
     company_id = fields.Many2one('res.company',string='Company',default=lambda self: self.env.company,required=True,)
 
     work_order_line_ids = fields.One2many('dental.order.line','work_order_id',string="Work line",required=True)
-    
+    pmma_line_ids = fields.One2many('pmma.line', 'work_order_id', string="PMMA Lines")
     
     @api.model_create_multi
     def create(self, vals_list):
@@ -57,10 +57,11 @@ class DentalLabOrder(models.Model):
         self.write({'state': 'in_progress'})
 
     def action_done(self):
-        #TODO: in PMMA CASE UNTIL 1 VALID PMMA IS DONE TO ALLOW DONE STATE
         for order in self:
             if order.state != 'in_progress':
                 raise UserError("Only orders in progress can be marked as done.")
+            if order.pmma_line_ids and not order.pmma_line_ids.filtered(lambda l: l.state == 'validated'):
+                raise UserError(_("This order has PMMA lines but none of them has been validated yet."))
         self.write({'state': 'done'})
 
     def action_cancel(self):
