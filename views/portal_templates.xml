@@ -2,7 +2,7 @@
 <odoo>
 
     <!-- ===================================================================== -->
-    <!-- Portal home tile (unchanged)                                          -->
+    <!-- Portal home tile                                                      -->
     <!-- ===================================================================== -->
     <template id="portal_my_home_dental_order" name="Show Dental Orders on Home" customize_show="True" inherit_id="portal.portal_my_home" priority="50">
         <div id="portal_client_category" position="inside">
@@ -17,7 +17,7 @@
     </template>
 
     <!-- ===================================================================== -->
-    <!-- List view (unchanged)                                                 -->
+    <!-- List view                                                             -->
     <!-- ===================================================================== -->
     <template id="portal_my_dental_orders" name="My Dental Work Orders">
         <t t-call="portal.portal_layout">

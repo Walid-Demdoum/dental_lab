@@ -81,15 +81,17 @@
                                     <field name="date"/>
                                     <field name="description"/>
                                     <field name="qty"/>
+                                    <field name="attachment_filename" column_invisible="1"/>
+                                    <field name="attachment" widget="binary" filename="attachment_filename" string="File"/>
                                     <field name="unit_price"/>
                                     <field name="total_price" readonly="1"/>
                                     <field name="state" widget="badge"
                                         decoration-success="state == 'validated'"
                                         decoration-danger="state == 'failed'"/>
-                                    <button name="action_validate" type="object" string="Validate"
-                                            icon="fa-check" invisible="state != 'draft'"/>
-                                    <button name="action_fail" type="object" string="Fail"
-                                            icon="fa-times" invisible="state != 'draft'"/>
+                                    <button name="action_validate" type="object" string=""
+                                            icon="fa-check" title="check" invisible="state != 'draft'"/>
+                                    <button name="action_fail" type="object" string=""
+                                            icon="fa-times" title="fail" invisible="state != 'draft'"/>
                                 </list>
                             </field>
                         </page>

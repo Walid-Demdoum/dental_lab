@@ -22,6 +22,8 @@ class PMMA(models.Model):
     unit_price = fields.Monetary(string="Unit price", default=0)
     qty = fields.Integer(string="Qty", default=1)
     total_price = fields.Monetary(string="Total price", compute="_compute_total_price")
+    attachment = fields.Binary(string="Attachment", attachment=True)
+    attachment_filename = fields.Char(string="Attachment Filename")
 
     @api.depends('unit_price','qty')
     def _compute_total_price(self):
@@ -54,3 +56,13 @@ class PMMA(models.Model):
             if rec.state != 'draft':
                 raise UserError(_("Only a PMMA that was sent to the dentist can be marked as failed."))
         self.write({'state': 'failed'})
+
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        for rec in records:
+            pending = rec.work_order_id.pmma_line_ids.filtered(lambda l: l.id != rec.id and l.state != 'failed')
+            if pending:
+                raise UserError(_("You cannot add a new PMMA line while another one for this work order is still pending."))
+        return records
