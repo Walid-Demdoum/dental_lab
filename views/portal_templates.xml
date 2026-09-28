@@ -8,10 +8,11 @@
         <div id="portal_client_category" position="inside">
             <t t-call="portal.portal_docs_entry">
                 <t t-set="icon" t-value="'/dental_lab/static/src/img/tooth.svg'"/>
-                <t t-set="title">My work orders</t>
+                <t t-set="title">Your work orders</t>
                 <t t-set="url" t-value="'/my/dental-orders'"/>
                 <t t-set="text">Create or track your work orders here</t>
                 <t t-set="placeholder_count" t-value="'dental_order_count'"/>
+                <t t-set="config_card" t-value="True"/>
             </t>
         </div>
     </template>
@@ -34,7 +35,7 @@
             </div>
 
             <t t-if="not orders">
-                <p>There are no dental work orders yet.</p>
+                <p class="alert alert-warning">There are no dental work orders yet.</p>
             </t>
             <t t-if="orders" t-call="portal.portal_table">
                 <thead>

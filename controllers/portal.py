@@ -60,6 +60,7 @@ class DentalLabPortal(CustomerPortal):
                 if DentalOrder.check_access_rights('read',raise_exception=False)
                 else 0
             )
+        logging.info("======================================= %s",values)
         return values
 
     def _dental_order_get_page_view_values(self, order, access_token, **kwargs):
