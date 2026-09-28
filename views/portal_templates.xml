@@ -402,34 +402,83 @@
                         </div>
                     </div>
 
+                    <t t-set="show_pmma" t-value="order.state in ('in_progress', 'done', 'cancel') and order.pmma_line_ids"/>
                     <div class="o_dl_notebook">
-                        <ul class="nav o_dl_notebook_tabs flex-row flex-nowrap">
-                            <li class="nav-item"><span class="nav-link active">Work Lines</span></li>
+                        <ul class="nav o_dl_notebook_tabs flex-row flex-nowrap" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#dl-tab-lines" role="tab"
+                                aria-controls="dl-tab-lines" aria-selected="true">Work Lines</a>
+                            </li>
+                            <li t-if="show_pmma" class="nav-item" role="presentation">
+                                <a class="nav-link" data-bs-toggle="tab" href="#dl-tab-pmma" role="tab"
+                                aria-controls="dl-tab-pmma" aria-selected="false">PMMA</a>
+                            </li>
                         </ul>
-                        <div class="o_dl_list_wrapper">
-                            <table class="o_dl_list_table" t-if="order.work_order_line_ids">
-                                <thead>
-                                    <tr>
-                                        <th>Teeth</th>
-                                        <th>Work Type</th>
-                                        <th>Description</th>
-                                        <th class="o_dl_col_num">Qty</th>
-                                        <th class="o_dl_col_center">Implant</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr t-foreach="order.work_order_line_ids" t-as="line">
-                                        <td><span t-field="line.teeth"/></td>
-                                        <td><span t-field="line.work_type"/></td>
-                                        <td><span t-field="line.description"/></td>
-                                        <td class="o_dl_col_num"><span t-field="line.quantity"/></td>
-                                        <td class="o_dl_col_center">
-                                            <i t-if="line.is_implant" class="fa fa-check text-success" title="Implant"/>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <p t-else="" class="text-muted py-3 mb-0">No work lines.</p>
+
+                        <div class="tab-content">
+                            <!-- Work lines -->
+                            <div class="tab-pane fade show active" id="dl-tab-lines" role="tabpanel">
+                                <div class="o_dl_list_wrapper">
+                                    <table class="o_dl_list_table" t-if="order.work_order_line_ids">
+                                        <thead>
+                                            <tr>
+                                                <th>Teeth</th>
+                                                <th>Work Type</th>
+                                                <th>Description</th>
+                                                <th class="o_dl_col_num">Qty</th>
+                                                <th class="o_dl_col_center">Implant</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="order.work_order_line_ids" t-as="line">
+                                                <td><span t-field="line.teeth"/></td>
+                                                <td><span t-field="line.work_type"/></td>
+                                                <td><span t-field="line.description"/></td>
+                                                <td class="o_dl_col_num"><span t-field="line.quantity"/></td>
+                                                <td class="o_dl_col_center">
+                                                    <i t-if="line.is_implant" class="fa fa-check text-success" title="Implant"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p t-else="" class="text-muted py-3 mb-0">No work lines.</p>
+                                </div>
+                            </div>
+
+                            <!-- PMMA (read-only) -->
+                            <div t-if="show_pmma" class="tab-pane fade" id="dl-tab-pmma" role="tabpanel">
+                                <div class="o_dl_list_wrapper">
+                                    <table class="o_dl_list_table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Description</th>
+                                                <th class="o_dl_col_num">Qty</th>
+                                                <th>File</th>
+                                                <th class="o_dl_col_center">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="order.pmma_line_ids" t-as="pmma">
+                                                <td><span t-field="pmma.date"/></td>
+                                                <td><span t-field="pmma.description"/></td>
+                                                <td class="o_dl_col_num"><span t-field="pmma.qty"/></td>
+                                                <td>
+                                                    <a t-if="pmma.attachment_filename"
+                                                    t-attf-href="/web/content/pmma.line/#{pmma.id}/attachment/#{pmma.attachment_filename}?download=true"
+                                                    target="_blank">
+                                                        <i class="fa fa-paperclip me-1"/><t t-out="pmma.attachment_filename"/>
+                                                    </a>
+                                                </td>
+                                                <td class="o_dl_col_center">
+                                                    <span t-field="pmma.state"
+                                                        t-attf-class="badge #{'text-bg-success' if pmma.state == 'validated' else ('text-bg-danger' if pmma.state == 'failed' else 'text-bg-secondary')}"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
