@@ -3,6 +3,7 @@
     <menuitem id="menu_dental_lab_root"
               name="Dental Lab"
               sequence="45"
+              web_icon="dental_lab,static/description/tooth.png"
               groups="group_dental_lab_technician"/>
 
     <menuitem id="menu_dental_lab_orders"
