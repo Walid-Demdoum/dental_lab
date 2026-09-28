@@ -222,7 +222,7 @@ textarea.o_dl_input {
         color: var(--bs-body-color) !important;
         font-weight: 500;
         border-bottom: 2px solid transparent;
-        cursor: default;
+        cursor: pointer;
 
         &.active {
             color: var(--dl-primary);
