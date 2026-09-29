@@ -26,7 +26,7 @@ class DentalLabOrder(models.Model):
     date_order = fields.Date(string='Order Date',default=fields.Date.context_today,required=True)
     date_due = fields.Date(string='Due Date', tracking=True)
     priority = fields.Selection(selection=[('0', 'Normal'), ('1', 'Urgent')],string='Priority',default='0')
-    technician_id = fields.Many2one('res.users',string='Assigned Technician',tracking=True)
+    technician_id = fields.Many2one('res.users',string='Assigned Technician',tracking=True,index=True)
     attachment_ids = fields.One2many('ir.attachment', 'res_id', string='Scans',domain=lambda self: [('res_model', '=', self._name)],)
     notes = fields.Text(string='Instructions / Notes')
 
@@ -35,6 +35,10 @@ class DentalLabOrder(models.Model):
 
     work_order_line_ids = fields.One2many('dental.order.line','work_order_id',string="Work line",required=True)
     pmma_line_ids = fields.One2many('pmma.line', 'work_order_id', string="PMMA Lines")
+
+    price_total_wol = fields.Monetary(string="Work lines total",compute="_compute_amounts",store=True)
+    price_total_pmma = fields.Monetary(string="Pmma lines total",compute="_compute_amounts",store=True)
+    total_wo_price = fields.Monetary(string="Subtotal",compute="_compute_amounts",store=True)
     
     @api.model_create_multi
     def create(self, vals_list):
@@ -70,4 +74,11 @@ class DentalLabOrder(models.Model):
     def action_reset_to_draft(self):
         self.write({'state': 'draft'})
 
-    
+
+    def _compute_amounts(self):
+        for rec in self:
+            work_lines_sum = sum(rec.work_order_line_ids.mapped('total_price'))
+            pmma_sum = sum(rec.pmma_line_ids.mapped('total_price'))
+            rec.price_total_wol = work_lines_sum
+            rec.price_total_pmma = pmma_sum
+            rec.total_wo_price = work_lines_sum + pmma_sum

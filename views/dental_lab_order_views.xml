@@ -5,6 +5,7 @@
         <field name="model">dental.lab.order</field>
         <field name="arch" type="xml">
             <list string="Dental Work Orders" decoration-success="state == 'done'" decoration-info="state == 'in_progress'" decoration-muted="state == 'cancel'">
+                <field name="currency_id" column_invisible="1"/>
                 <field name="name"/>
                 <field name="ref" />
                 <field name="partner_id"/>
@@ -13,6 +14,7 @@
                 <field name="date_due"/>
                 <field name="technician_id"/>
                 <field name="priority" widget="priority" optional="show"/>
+                <field name="total_wo_price" />
                 <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'in_progress'" decoration-danger="state == 'cancel'"/>
             </list>
         </field>
@@ -96,6 +98,12 @@
                             </field>
                         </page>
                     </notebook>
+                    <group class="oe_subtotal_footer">
+                        <field name="currency_id" invisible="1" />
+                        <field name="price_total_wol" />
+                        <field name="price_total_pmma" />
+                        <field name="total_wo_price" />
+                    </group>
                 </sheet>
                 <chatter/>
             </form>
