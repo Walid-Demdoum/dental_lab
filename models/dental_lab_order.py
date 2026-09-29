@@ -36,7 +36,7 @@ class DentalLabOrder(models.Model):
     work_order_line_ids = fields.One2many('dental.order.line','work_order_id',string="Work line",required=True)
     pmma_line_ids = fields.One2many('pmma.line', 'work_order_id', string="PMMA Lines")
 
-    price_total_wol = fields.Monetary(string="Work lines total",compute="_compute_amounts",store=True)
+    price_total_wol = fields.Monetary(string="Elements total",compute="_compute_amounts",store=True)
     price_total_pmma = fields.Monetary(string="Pmma lines total",compute="_compute_amounts",store=True)
     total_wo_price = fields.Monetary(string="Subtotal",compute="_compute_amounts",store=True)
     
@@ -74,7 +74,7 @@ class DentalLabOrder(models.Model):
     def action_reset_to_draft(self):
         self.write({'state': 'draft'})
 
-
+    @api.depends('work_order_line_ids','work_order_line_ids.total_price','pmma_line_ids','pmma_line_ids.total_price')
     def _compute_amounts(self):
         for rec in self:
             work_lines_sum = sum(rec.work_order_line_ids.mapped('total_price'))

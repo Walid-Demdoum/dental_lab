@@ -427,6 +427,8 @@
                                                 <th>Description</th>
                                                 <th class="o_dl_col_num">Qty</th>
                                                 <th class="o_dl_col_center">Implant</th>
+                                                <th class="o_dl_col_num">Unit Price</th>
+                                                <th class="o_dl_col_num">Total</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -437,6 +439,12 @@
                                                 <td class="o_dl_col_num"><span t-field="line.quantity"/></td>
                                                 <td class="o_dl_col_center">
                                                     <i t-if="line.is_implant" class="fa fa-check text-success" title="Implant"/>
+                                                </td>
+                                                 <td class="o_dl_col_num">
+                                                    <span t-field="line.unit_price" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
+                                                </td>
+                                                <td class="o_dl_col_num">
+                                                    <span t-field="line.total_price" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -456,6 +464,8 @@
                                                 <th class="o_dl_col_num">Qty</th>
                                                 <th>File</th>
                                                 <th class="o_dl_col_center">Status</th>
+                                                <th class="o_dl_col_num">Unit Price</th>
+                                                <th class="o_dl_col_num">Total</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -474,10 +484,32 @@
                                                     <span t-field="pmma.state"
                                                         t-attf-class="badge #{'text-bg-success' if pmma.state == 'validated' else ('text-bg-danger' if pmma.state == 'failed' else 'text-bg-secondary')}"/>
                                                 </td>
+                                                <td class="o_dl_col_num">
+                                                    <span t-field="pmma.unit_price" t-options="{'widget': 'monetary', 'display_currency': pmma.currency_id}"/>
+                                                </td>
+                                                <td class="o_dl_col_num">
+                                                    <span t-field="pmma.total_price" t-options="{'widget': 'monetary', 'display_currency': pmma.currency_id}"/>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="o_dl_group o_dl_group_single">
+                        <div class="o_dl_inner_group o_dl_inner_group_wide ms-auto" style="max-width: 320px;">
+                            <span class="o_form_label">Elements Total</span>
+                            <div class="o_dl_value text-end">
+                                <span t-field="order.price_total_wol" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                            </div>
+                            <span t-if="order.price_total_pmma" class="o_form_label">PMMA Total</span>
+                            <div t-if="order.price_total_pmma" class="o_dl_value text-end">
+                                <span t-field="order.price_total_pmma" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
+                            </div>
+                            <span class="o_form_label fw-bold">Grand Total</span>
+                            <div class="o_dl_value text-end fw-bold">
+                                <span t-field="order.total_wo_price" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/>
                             </div>
                         </div>
                     </div>
