@@ -18,8 +18,7 @@ class DentalLabOrder(models.Model):
     state = fields.Selection(selection=STATE_SELECTION,string='Status',default='draft',tracking=True,copy=False,index=True,)
 
     name = fields.Char(string="Reference",required=True,copy=False,readonly=True,default=lambda self: 'New')
-    ref = fields.Char(string="Form Number")
-    form_number = fields.Char(string="Form number",copy=False)
+    ref = fields.Char(string="Form Number",copy=False)
     partner_id = fields.Many2one('res.partner',string='Dentist',required=True,tracking=True,index=True,default=lambda self: self.env.user.partner_id,)
     patient_name = fields.Char(string='Patient Name', required=True, tracking=True)
     shade = fields.Char(string='Shade / Color')
