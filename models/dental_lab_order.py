@@ -56,7 +56,11 @@ class DentalLabOrder(models.Model):
     def action_start(self):
         for order in self:
             if order.state != 'draft':
-                raise UserError("Only new orders can be started.")
+                raise UserError(_("Only new orders can be started."))
+            if not order.work_order_line_ids:
+                raise UserError(_("You must add at least one work order line before starting this order."))
+            if not order.technician_id:
+                raise UserError(_("A technician is required to start this work order"))
         self.write({'state': 'in_progress'})
 
     def action_done(self):
