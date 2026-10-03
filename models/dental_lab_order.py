@@ -19,7 +19,7 @@ class DentalLabOrder(models.Model):
 
     name = fields.Char(string="Reference",required=True,copy=False,readonly=True,default=lambda self: 'New')
     ref = fields.Char(string="Form Number",copy=False)
-    partner_id = fields.Many2one('res.partner',string='Dentist',required=True,tracking=True,index=True,default=lambda self: self.env.user.partner_id,)
+    partner_id = fields.Many2one('res.partner',string='Dentist',required=True,tracking=True,index=True,default=lambda self: self.env.user.partner_id if self.env.user.has_group('base.group_portal') else False,)
     patient_name = fields.Char(string='Patient Name', required=True, tracking=True)
     shade = fields.Char(string='Shade / Color')
     date_order = fields.Date(string='Order Date',default=fields.Date.context_today,required=True)
