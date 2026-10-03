@@ -12,6 +12,9 @@
                         <field name="partner_type" widget="radio" options="{'horizontal': true}"/>
                     </div>
                 </group>
+                <group>
+                    <field name="anon_code" />
+                </group>
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page name="work_orders" string="Work Orders">

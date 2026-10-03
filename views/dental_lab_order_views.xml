@@ -38,7 +38,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="partner_id" readonly="state != 'draft'" domain="[('partner_type','=','dentist')]" options="{'no_quick_create': True,'no_create':True}"/>
+                            <field name="partner_id" readonly="state != 'draft'" domain="[('partner_type','=','dentist')]" options="{'no_quick_create': True,'no_create':True,'no_open':True}" />
                             <field name="patient_name" readonly="state != 'draft'"/>
                             <field name="ref" readonly="state != 'draft'"/>
                             <field name="technician_id" groups="dental_lab.group_dental_lab_manager" readonly="state != 'draft'" domain="[('partner_id.partner_type','=','tech')]" options="{'no_quick_create': True,'no_create':True}"/>
