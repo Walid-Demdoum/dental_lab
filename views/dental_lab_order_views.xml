@@ -12,7 +12,7 @@
                 <field name="patient_name"/>
                 <field name="date_order"/>
                 <field name="date_due"/>
-                <field name="technician_id"/>
+                <field name="technician_id" groups="dental_lab.group_dental_lab_manager"/>
                 <field name="priority" widget="priority" optional="show"/>
                 <field name="total_wo_price" />
                 <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'in_progress'" decoration-danger="state == 'cancel'"/>
@@ -41,7 +41,7 @@
                             <field name="partner_id" readonly="state != 'draft'" domain="[('partner_type','=','dentist')]" options="{'no_quick_create': True,'no_create':True}"/>
                             <field name="patient_name" readonly="state != 'draft'"/>
                             <field name="ref" readonly="state != 'draft'"/>
-                            <field name="technician_id" readonly="state != 'draft'" domain="[('partner_id.partner_type','=','tech')]" options="{'no_quick_create': True,'no_create':True}"/>
+                            <field name="technician_id" groups="dental_lab.group_dental_lab_manager" readonly="state != 'draft'" domain="[('partner_id.partner_type','=','tech')]" options="{'no_quick_create': True,'no_create':True}"/>
                         </group>
                         <group>
                             <field name="date_order" readonly="state != 'draft'"/>
@@ -127,7 +127,7 @@
                             <div><field name="patient_name"/></div>
                             <div><field name="ref"/></div>
                             <div class="d-flex justify-content-between mt-2">
-                                <field name="technician_id" widget="many2one_avatar_user"/>
+                                <field name="technician_id" groups="dental_lab.group_dental_lab_manager" widget="many2one_avatar_user"/>
                                 <field name="date_due"/>
                             </div>
                         </div>
@@ -145,7 +145,7 @@
                 <field name="name"/>
                 <field name="patient_name"/>
                 <field name="partner_id" string="Dentist"/>
-                <field name="technician_id"/>
+                <field name="technician_id" groups="dental_lab.group_dental_lab_manager"/>
                 <field name="ref" />
                 <filter name="filter_draft" string="New" domain="[('state', '=', 'draft')]"/>
                 <filter name="filter_in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>

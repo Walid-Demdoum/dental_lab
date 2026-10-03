@@ -25,7 +25,7 @@ class DentalLabOrder(models.Model):
     date_order = fields.Date(string='Order Date',default=fields.Date.context_today,required=True)
     date_due = fields.Date(string='Due Date', tracking=True)
     priority = fields.Selection(selection=[('0', 'Normal'), ('1', 'Urgent')],string='Priority',default='0')
-    technician_id = fields.Many2one('res.users',string='Assigned Technician',tracking=True,index=True)
+    technician_id = fields.Many2one('res.users',string='Assigned Technician',tracking=True, index=True,default=lambda self: self.env.user if self.env.user.has_group('dental_lab.group_dental_lab_technician') else False)
     attachment_ids = fields.One2many('ir.attachment', 'res_id', string='Scans',domain=lambda self: [('res_model', '=', self._name)],)
     notes = fields.Text(string='Instructions / Notes')
 
