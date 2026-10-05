@@ -114,9 +114,11 @@
         <field name="name">dental.lab.order.kanban</field>
         <field name="model">dental.lab.order</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="state" class="o_kanban_small_column">
+            <kanban default_group_by="state_kanban_order" class="o_kanban_small_column"  records_draggable="false">
                 <field name="state"/>
+                <field name="state_kanban_order" />
                 <field name="priority"/>
+                <field name="technician_id"/>
                 <templates>
                     <t t-name="card">
                         <div class="oe_kanban_card oe_kanban_global_click">
