@@ -190,12 +190,12 @@
             </div>
 
             <div class="o_dl_cell">
-                <span class="o_dl_cell_label">Work Type</span>
+                <span class="o_dl_cell_label">Element Type</span>
                 <select class="form-select o_dl_input" required="required" t-attf-name="lines-#{line_index}-work_type">
                     <option value="">-- Select --</option>
-                    <option value="zircon" t-att-selected="'selected' if line and line.work_type == 'zircon' else None">Zircon</option>
-                    <option value="ccm" t-att-selected="'selected' if line and line.work_type == 'ccm' else None">CCM</option>
-                    <option value="ceramic_metal" t-att-selected="'selected' if line and line.work_type == 'ceramic_metal' else None">Metal-Ceramic</option>
+                    <option t-foreach="products" t-as="product" t-att-value="product.id" t-att-selected="'selected' if line and line.product_tmpl_id == product else None">
+                        <t t-out="product.name"/>
+                    </option>
                 </select>
             </div>
 
@@ -209,15 +209,6 @@
                 <span class="o_dl_cell_label">Qty</span>
                 <input type="number" min="1" class="o_dl_input text-md-end dental-quantity-input" readonly="readonly"
                        t-attf-name="lines-#{line_index}-quantity" t-att-value="line.quantity if line else 1"/>
-            </div>
-
-            <div class="o_dl_cell">
-                <span class="o_dl_cell_label">Implant</span>
-                <div class="form-check form-switch o_dl_switch_wrap">
-                    <input type="checkbox" role="switch" class="form-check-input"
-                           t-attf-id="implant-#{line_index}" t-attf-name="lines-#{line_index}-is_implant"
-                           t-att-checked="'checked' if line and line.is_implant else None"/>
-                </div>
             </div>
 
             <div class="o_dl_cell">
@@ -235,14 +226,13 @@
         <div class="o_dl_lines">
             <div class="o_dl_line o_dl_line_header">
                 <div>Teeth</div>
-                <div>Work Type</div>
+                <div>Element Type</div>
                 <div>Description</div>
                 <div class="text-end">Qty</div>
-                <div class="text-center">Implant</div>
                 <div/>
             </div>
 
-            <div id="dental-lines-container">
+            <div id="dental-lines-container" t-att-data-products="json.dumps([{'id': p.id, 'name': p.name} for p in products])">
                 <t t-if="order and order.work_order_line_ids">
                     <t t-foreach="order.work_order_line_ids" t-as="line">
                         <t t-call="dental_lab.portal_dental_order_line_row"/>
@@ -423,10 +413,9 @@
                                         <thead>
                                             <tr>
                                                 <th>Teeth</th>
-                                                <th>Work Type</th>
+                                                <th>Element Type</th>
                                                 <th>Description</th>
                                                 <th class="o_dl_col_num">Qty</th>
-                                                <th class="o_dl_col_center">Implant</th>
                                                 <th class="o_dl_col_num">Unit Price</th>
                                                 <th class="o_dl_col_num">Total</th>
                                             </tr>
@@ -434,12 +423,9 @@
                                         <tbody>
                                             <tr t-foreach="order.work_order_line_ids" t-as="line">
                                                 <td><span t-field="line.teeth"/></td>
-                                                <td><span t-field="line.work_type"/></td>
+                                                <td><span t-field="line.product_tmpl_id"/></td>
                                                 <td><span t-field="line.description"/></td>
                                                 <td class="o_dl_col_num"><span t-field="line.quantity"/></td>
-                                                <td class="o_dl_col_center">
-                                                    <i t-if="line.is_implant" class="fa fa-check text-success" title="Implant"/>
-                                                </td>
                                                  <td class="o_dl_col_num">
                                                     <span t-field="line.unit_price" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
                                                 </td>

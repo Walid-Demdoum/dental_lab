@@ -10,10 +10,15 @@ class DentalLabPortal(CustomerPortal):
     
     ALLOWED_ATTACHMENT_MIMETYPES = {'model/stl','application/x-tgif','application/zip','application/vnd.rar'}
     MAX_ATTACHMENT_SIZE = 50 * 1024 * 1024  # 50 MB
-    LINE_FIELD_RE = re.compile(r'^lines-(\d+)-work_type$')
+    LINE_FIELD_RE = re.compile(r'^lines-(\d+)-product_tmpl_id$')
+    DENTAL_PRODUCT_DOMAIN = [('sale_ok', '=', True)]
+
+    def _get_dental_products(self):
+        return request.env['product.template'].sudo().search(self.DENTAL_PRODUCT_DOMAIN)
 
     def _prepare_line_commands(self, post, existing_line_ids=None):
         existing_line_ids = set(existing_line_ids or [])
+        allowed_product_ids = set(self._get_dental_products().ids)
         indices = set()
         for key in post.keys():
             m = self.LINE_FIELD_RE.match(key)
@@ -24,17 +29,21 @@ class DentalLabPortal(CustomerPortal):
         kept_line_ids = set()
         for i in sorted(indices):
             prefix = 'lines-%s-' % i
-            work_type = post.get(prefix + 'work_type')
+
+            raw_product = post.get(prefix + 'product_tmpl_id')
+            product_id = int(raw_product) if raw_product and raw_product.isdigit() else False
+            if product_id not in allowed_product_ids:
+                product_id = False
+            
             teeth = post.get(prefix + 'teeth')
-            if not work_type and not teeth:
+            if not product_id and not teeth:
                 continue
             quantity = int(post.get(prefix + 'quantity') or 1)
             vals = {
-                'work_type': work_type or False,
+                'product_tmpl_id': product_id,
                 'teeth': teeth,
                 'description': post.get(prefix + 'description'),
                 'quantity': max(quantity, 1),
-                'is_implant': bool(post.get(prefix + 'is_implant')),
             }
             raw_line_id = post.get(prefix + 'line_id')
             line_id = int(raw_line_id) if raw_line_id and raw_line_id.isdigit() else False
@@ -64,7 +73,7 @@ class DentalLabPortal(CustomerPortal):
         return values
 
     def _dental_order_get_page_view_values(self, order, access_token, **kwargs):
-        values = {'order': order}
+        values = {'order': order, 'products': self._get_dental_products()}
         return self._get_page_view_values(
             order, access_token, values, 'my_dental_orders_history', False, **kwargs
         )
@@ -136,7 +145,7 @@ class DentalLabPortal(CustomerPortal):
 
     @http.route(['/my/dental-orders/new'], type='http', auth='user', website=True, methods=['GET'])
     def portal_dental_order_new(self, **kw):
-        return request.render('dental_lab.portal_dental_order_form', {'page_name': 'dental_order_new'})
+        return request.render('dental_lab.portal_dental_order_form', {'page_name': 'dental_order_new','products': self._get_dental_products()})
 
     @http.route(['/my/dental-orders/submit'], type='http', auth='user', website=True, methods=['POST'], csrf=True)
     def portal_dental_order_submit(self, **post):

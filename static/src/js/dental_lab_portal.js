@@ -239,6 +239,7 @@ function initAttachments() {
 function initDentalLines() {
     var container = document.getElementById('dental-lines-container');
     var addBtn = document.getElementById('dental-add-line');
+    var products = JSON.parse(container.dataset.products || '[]');
     if (!container || !addBtn) {
         return;
     }
@@ -246,9 +247,9 @@ function initDentalLines() {
     var nextIndex = container.querySelectorAll('.dental-line-row').length;
 
     function buildRow(index) {
-        var row = document.createElement('div');
-        row.className = 'o_dl_line dental-line-row';
-        row.innerHTML =
+    var row = document.createElement('div');
+    row.className = 'o_dl_line dental-line-row';
+    row.innerHTML =
             '<div class="o_dl_cell">' +
                 '<span class="o_dl_cell_label">Teeth</span>' +
                 '<div class="o_dl_teeth">' +
@@ -260,12 +261,7 @@ function initDentalLines() {
             '</div>' +
             '<div class="o_dl_cell">' +
                 '<span class="o_dl_cell_label">Work Type</span>' +
-                '<select class="form-select o_dl_input" required="required" name="lines-' + index + '-work_type">' +
-                    '<option value="">-- Select --</option>' +
-                    '<option value="zircon">Zircon</option>' +
-                    '<option value="ccm">CCM</option>' +
-                    '<option value="ceramic_metal">Metal-Ceramic</option>' +
-                '</select>' +
+                '<select class="form-select o_dl_input dental-product-select" required="required" name="lines-' + index + '-product_tmpl_id"></select>' +
             '</div>' +
             '<div class="o_dl_cell">' +
                 '<span class="o_dl_cell_label">Description</span>' +
@@ -276,14 +272,14 @@ function initDentalLines() {
                 '<input type="number" min="1" class="o_dl_input text-md-end dental-quantity-input" readonly="readonly" name="lines-' + index + '-quantity" value="1"/>' +
             '</div>' +
             '<div class="o_dl_cell">' +
-                '<span class="o_dl_cell_label">Implant</span>' +
-                '<div class="form-check form-switch o_dl_switch_wrap">' +
-                    '<input type="checkbox" role="switch" class="form-check-input" id="implant-' + index + '" name="lines-' + index + '-is_implant"/>' +
-                '</div>' +
-            '</div>' +
-            '<div class="o_dl_cell">' +
                 '<button type="button" class="btn btn-link o_dl_remove dental-remove-line" title="Delete line"><i class="fa fa-trash-o"></i></button>' +
             '</div>';
+
+        var select = row.querySelector('.dental-product-select');
+        select.appendChild(new Option('-- Select --', ''));
+        products.forEach(function (p) {
+            select.appendChild(new Option(p.name, p.id));
+        });
         return row;
     }
 
