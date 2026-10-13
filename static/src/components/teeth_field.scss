@@ -1,0 +1,44 @@
+.o_dental_teeth_editable {
+    cursor: pointer;
+}
+
+.o_dental_odontogram {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+
+    .o_dental_midline {
+        stroke: #ced4da;
+        stroke-dasharray: 4 3;
+        stroke-width: 1;
+    }
+
+    .o_dental_tooth {
+        cursor: pointer;
+
+        polygon, rect {
+            fill: #e9ecef;
+            stroke: #6c757d;
+            stroke-width: 1.5;
+            transition: fill .15s ease, stroke .15s ease;
+        }
+        &:hover polygon, &:hover rect {
+            stroke: var(--bs-primary, #714b67);
+        }
+        &.active polygon, &.active rect {
+            fill: var(--bs-primary, #714b67);
+            stroke: rgba(0, 0, 0, .35);
+        }
+        .o_dental_tooth_label {
+            font-size: 11px;
+            fill: #495057;
+            pointer-events: none;
+            user-select: none;
+        }
+        &.active .o_dental_tooth_label {
+            fill: var(--bs-primary, #714b67);
+            font-weight: 600;
+        }
+    }
+}

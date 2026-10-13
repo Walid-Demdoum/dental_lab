@@ -28,5 +28,10 @@
             'dental_lab/static/src/js/dental_lab_portal.js',
             'dental_lab/static/src/scss/portal.scss',
         ],
+        'web.assets_backend': [
+            'dental_lab/static/src/components/teeth_field.js',
+            'dental_lab/static/src/components/teeth_field.xml',
+            'dental_lab/static/src/components/teeth_field.scss',
+        ],
     },
 }

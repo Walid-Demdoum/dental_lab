@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="dental_lab.TeethField">
+        <div class="o_dental_teeth_field d-flex align-items-center gap-1"
+             t-att-class="{'o_dental_teeth_editable': !props.readonly}"
+             t-on-click="openOdontogram">
+            <span t-if="value" class="flex-grow-1 text-truncate" t-out="value"/>
+            <span t-else="" class="flex-grow-1 text-muted">Select teeth...</span>
+            <button t-if="!props.readonly" type="button" class="btn btn-sm btn-light border"
+                    title="Select teeth">
+                <img src="/dental_lab/static/src/img/tooth.svg" alt="" width="16" height="16"/>
+            </button>
+        </div>
+    </t>
+
+    <t t-name="dental_lab.OdontogramDialog">
+        <Dialog size="'lg'" title="title">
+            <div class="text-center">
+                <svg class="o_dental_odontogram" t-att-viewBox="'0 0 ' + chart.width + ' ' + chart.height">
+                    <line class="o_dental_midline"
+                          t-att-x1="chart.width / 2" y1="10"
+                          t-att-x2="chart.width / 2" t-att-y2="chart.height - 10"/>
+                    <g t-foreach="chart.teeth" t-as="tooth" t-key="tooth.key"
+                       t-attf-class="o_dental_tooth #{isSelected(tooth.key) ? 'active' : ''}"
+                       t-att-transform="'translate(' + tooth.x + ',' + tooth.y + ')'"
+                       t-on-click="() => this.toggle(tooth.key)">
+                        <polygon t-att-points="tooth.rootPoints"/>
+                        <rect x="2" t-att-y="tooth.crownY" t-att-width="tooth.crownW"
+                              t-att-height="tooth.crownH" rx="6" ry="6"/>
+                        <text class="o_dental_tooth_label" text-anchor="middle"
+                              t-att-x="tooth.labelX" t-att-y="tooth.labelY" t-out="tooth.key"/>
+                    </g>
+                </svg>
+            </div>
+            <p class="text-muted small mt-2 mb-0">
+                Selected (<t t-out="state.selected.length"/>): <t t-out="selectedLabel"/>
+            </p>
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-on-click="apply">Apply</button>
+                <button class="btn btn-secondary" t-on-click="props.close">Discard</button>
+                <button class="btn btn-link ms-auto" t-on-click="clear">Clear</button>
+            </t>
+        </Dialog>
+    </t>
+
+</templates>

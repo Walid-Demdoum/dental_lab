@@ -43,7 +43,6 @@ class DentalLabPortal(CustomerPortal):
                 'product_tmpl_id': product_id,
                 'teeth': teeth,
                 'description': post.get(prefix + 'description'),
-                'quantity': max(quantity, 1),
             }
             raw_line_id = post.get(prefix + 'line_id')
             line_id = int(raw_line_id) if raw_line_id and raw_line_id.isdigit() else False
