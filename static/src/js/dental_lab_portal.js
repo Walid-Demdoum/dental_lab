@@ -239,10 +239,10 @@ function initAttachments() {
 function initDentalLines() {
     var container = document.getElementById('dental-lines-container');
     var addBtn = document.getElementById('dental-add-line');
-    var products = JSON.parse(container.dataset.products || '[]');
     if (!container || !addBtn) {
         return;
     }
+    var products = JSON.parse(container.dataset.products || '[]');
     Array.prototype.slice.call(container.querySelectorAll('.dental-line-row')).forEach(syncRowQuantity);
     var nextIndex = container.querySelectorAll('.dental-line-row').length;
 

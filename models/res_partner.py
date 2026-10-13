@@ -77,10 +77,4 @@ class ResPartner(models.Model):
                     rec[f] = anon_code if f == 'name' else False
         return result
 
-    @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
-        args = list(args or [])
-        if name and ('partner_type', '=', 'dentist') in args and self._is_restricted_technician():
-            partners = self.search(args + [('anon_code', operator, name)], limit=limit)
-            return partners.name_get()
-        return super().name_search(name=name, args=args, operator=operator, limit=limit)
+   
