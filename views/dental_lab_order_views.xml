@@ -68,8 +68,8 @@
                                     <field name="description" />
                                     <field name="teeth" required="1"/>
                                     <field name="quantity" required="1"/>
-                                    <field name="unit_price" required="1"/>
-                                    <field name="total_price" readonly="1"/>
+                                    <field name="unit_price" required="1" groups="dental_lab.group_dental_lab_manager"/>
+                                    <field name="total_price" readonly="1" groups="dental_lab.group_dental_lab_manager"/>
                                 </list>
                             </field>
                         </page>
@@ -84,8 +84,8 @@
                                     <field name="qty"/>
                                     <field name="attachment_filename" column_invisible="1"/>
                                     <field name="attachment" widget="binary" filename="attachment_filename" string="File"/>
-                                    <field name="unit_price"/>
-                                    <field name="total_price" readonly="1"/>
+                                    <field name="unit_price" groups="dental_lab.group_dental_lab_manager"/>
+                                    <field name="total_price" readonly="1" groups="dental_lab.group_dental_lab_manager"/>
                                     <field name="state" widget="badge"
                                         decoration-success="state == 'validated'"
                                         decoration-danger="state == 'failed'"/>
@@ -97,11 +97,11 @@
                             </field>
                         </page>
                     </notebook>
-                    <group class="oe_subtotal_footer">
+                    <group class="oe_subtotal_footer" groups="dental_lab.group_dental_lab_manager">
                         <field name="currency_id" invisible="1" />
-                        <field name="price_total_wol" />
-                        <field name="price_total_pmma" />
-                        <field name="total_wo_price" />
+                        <field name="price_total_wol" groups="dental_lab.group_dental_lab_manager"/>
+                        <field name="price_total_pmma" groups="dental_lab.group_dental_lab_manager"/>
+                        <field name="total_wo_price" groups="dental_lab.group_dental_lab_manager"/>
                     </group>
                 </sheet>
                 <chatter/>
