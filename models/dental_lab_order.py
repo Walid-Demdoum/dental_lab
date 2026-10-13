@@ -83,7 +83,7 @@ class DentalLabOrder(models.Model):
     def action_done(self):
         for order in self:
             if order.state != 'in_progress':
-                raise UserError("Only orders in progress can be marked as done.")
+                raise UserError(_("Only orders in progress can be marked as done."))
             if order.pmma_line_ids and not order.pmma_line_ids.filtered(lambda l: l.state == 'validated'):
                 raise UserError(_("This order has PMMA lines but none of them has been validated yet."))
         self.write({'state': 'done'})

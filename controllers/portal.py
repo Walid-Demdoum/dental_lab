@@ -3,7 +3,6 @@ from odoo.exceptions import AccessError, MissingError,UserError
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 import base64
-import logging
 import re
 
 class DentalLabPortal(CustomerPortal):
@@ -68,7 +67,6 @@ class DentalLabPortal(CustomerPortal):
                 if DentalOrder.has_access('read')
                 else 0
             )
-        logging.info("======================================= %s",values)
         return values
 
     def _dental_order_get_page_view_values(self, order, access_token, **kwargs):
@@ -83,12 +81,15 @@ class DentalLabPortal(CustomerPortal):
             if not file or not file.filename:
                 continue
             content = file.read()
+            
+            #TODO : Notify user instead of silent drop
             if not content or len(content) > self.MAX_ATTACHMENT_SIZE:
                 continue
-                # raise UserError(_("Max allowed file size is 50mo."))
+            
+            #TODO : Notify user instead of silent drop, or just maybe accept any file.
             if (file.content_type or '') not in self.ALLOWED_ATTACHMENT_MIMETYPES:
                 continue
-                # raise UserError(_("File format not allowed."))
+            
             Attachment.create({
                 'name': file.filename,
                 'datas': base64.b64encode(content),

@@ -1,7 +1,6 @@
 from odoo import models,fields,api,_
 from odoo.exceptions import ValidationError
 
-import logging
 
 FDI_TEETH = {str(q * 10 + n) for q in range(1, 5) for n in range(1, 9)}
 
@@ -33,7 +32,6 @@ class DentalLabOrderLine(models.Model):
 
     def _get_teeth_list(self):
         self.ensure_one()
-        logging.info("==================== %s",[t.strip() for t in (self.teeth or '').split(',') if t.strip()])
         return [t.strip() for t in (self.teeth or '').split(',') if t.strip()]
 
     @api.depends('teeth')

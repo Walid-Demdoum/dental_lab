@@ -1,6 +1,5 @@
 import uuid
 from odoo import models,fields,api,_
-import logging
 
 PARTNER_TYPE = [('dentist','Dentist'),('tech','Technician'),('other','Other')]
 DENTIST_SENSITIVE_FIELDS = [
