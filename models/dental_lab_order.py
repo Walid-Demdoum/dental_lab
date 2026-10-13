@@ -6,7 +6,12 @@ STATE_SELECTION = [ ('draft', 'New'),
                     ('in_progress', 'In Progress'),
                     ('done', 'Done'),
                     ('cancel', 'Cancelled')]
-
+STATE_SELECTION_KANBAN_ORDER = [
+    ('1.draft', 'New'),
+    ('2.in_progress', 'In Progress'),
+    ('3.done', 'Done'),
+    ('4.cancel', 'Cancelled')
+]
 
 class DentalLabOrder(models.Model):
     _name = 'dental.lab.order'
@@ -16,7 +21,7 @@ class DentalLabOrder(models.Model):
     _rec_name = 'name'
 
     state = fields.Selection(selection=STATE_SELECTION,string='Status',default='draft',tracking=True,copy=False,index=True,)
-
+    state_kanban_order = fields.Selection(selection=STATE_SELECTION_KANBAN_ORDER,string='Status kanban order',compute="_compute_state_kanban_order",store=True)
     name = fields.Char(string="Reference",required=True,copy=False,readonly=True,default=lambda self: 'New')
     ref = fields.Char(string="Form Number",copy=False)
     partner_id = fields.Many2one('res.partner',string='Dentist',required=True,tracking=True,index=True,default=lambda self: self.env.user.partner_id if self.env.user.has_group('base.group_portal') else False,)
@@ -52,6 +57,18 @@ class DentalLabOrder(models.Model):
                 if order.state != 'draft':
                     raise UserError(_("You can only edit a work order while it is still in the 'New' state."))
         return super().write(vals)
+
+    @api.depends('state')
+    def _compute_state_kanban_order(self):
+        for rec in self:
+            if rec.state == 'draft':
+                rec.state_kanban_order = '1.draft'
+            if rec.state == 'in_progress':
+                rec.state_kanban_order = '2.in_progress'
+            if rec.state == 'done':
+                rec.state_kanban_order = '3.done'
+            if rec.state == 'cancel':
+                rec.state_kanban_order = '4.cancel'
 
     def action_start(self):
         for order in self:
