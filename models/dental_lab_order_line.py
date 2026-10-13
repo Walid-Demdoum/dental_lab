@@ -8,7 +8,6 @@ class DentalLabOrderLine(models.Model):
     work_order_id = fields.Many2one('dental.lab.order',string="Work Order", required=True, ondelete='cascade')
     description = fields.Char(string="Description")
     product_tmpl_id = fields.Many2one('product.template',string="Element type",required=True,ondelete='restrict',)
-    is_implant = fields.Boolean(string="Implant",default=False)
     quantity = fields.Integer(string="Quantity",required=True,default=1)
     currency_id = fields.Many2one('res.currency',string="Currency",default= lambda self:self.env.company.currency_id.id)
     unit_price = fields.Monetary(string="Unit price")

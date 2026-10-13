@@ -191,7 +191,7 @@
 
             <div class="o_dl_cell">
                 <span class="o_dl_cell_label">Element Type</span>
-                <select class="form-select o_dl_input" required="required" t-attf-name="lines-#{line_index}-work_type">
+                <select class="form-select o_dl_input" required="required" t-attf-name="lines-#{line_index}-product_tmpl_id">
                     <option value="">-- Select --</option>
                     <option t-foreach="products" t-as="product" t-att-value="product.id" t-att-selected="'selected' if line and line.product_tmpl_id == product else None">
                         <t t-out="product.name"/>

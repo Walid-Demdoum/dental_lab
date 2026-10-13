@@ -298,16 +298,18 @@ function initDentalLines() {
         }
         var removeBtn = ev.target.closest('.dental-remove-line');
         if (removeBtn) {
-            var rows = container.querySelectorAll('.dental-line-row');
-            if (rows.length > 1) {
-                removeBtn.closest('.dental-line-row').remove();
-            }
+            removeBtn.closest('.dental-line-row').remove();
         }
     });
 
     var form = container.closest('form');
     if (form) {
         form.addEventListener('submit', function (ev) {
+            if (!form.querySelector('.dental-line-row')) {
+                ev.preventDefault();
+                window.alert('Please add at least one work line before submitting.');
+                return;
+            }
             var inputs = form.querySelectorAll('.dental-teeth-input');
             var emptyInput = null;
             for (var i = 0; i < inputs.length; i++) {

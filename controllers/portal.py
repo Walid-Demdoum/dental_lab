@@ -66,7 +66,7 @@ class DentalLabPortal(CustomerPortal):
             DentalOrder = request.env['dental.lab.order']
             values['dental_order_count'] = (
                 DentalOrder.search_count([('partner_id', '=', request.env.user.partner_id.id)])
-                if DentalOrder.check_access_rights('read',raise_exception=False)
+                if DentalOrder.has_access('read')
                 else 0
             )
         logging.info("======================================= %s",values)
@@ -149,6 +149,9 @@ class DentalLabPortal(CustomerPortal):
 
     @http.route(['/my/dental-orders/submit'], type='http', auth='user', website=True, methods=['POST'], csrf=True)
     def portal_dental_order_submit(self, **post):
+        line_commands = self._prepare_line_commands(post)
+        if not any(cmd[0] == 0 for cmd in line_commands):
+            return request.redirect('/my/dental-orders/new')
         vals = {
             'partner_id': request.env.user.partner_id.id,
             'patient_name': post.get('patient_name'),
@@ -156,7 +159,7 @@ class DentalLabPortal(CustomerPortal):
             'date_due': post.get('date_due') or False,
             'priority': post.get('priority') or '0',
             'notes': post.get('notes'),
-            'work_order_line_ids': self._prepare_line_commands(post),
+            'work_order_line_ids': line_commands,
         }
         order = request.env['dental.lab.order'].sudo().create(vals)
         self._create_order_attachments(order, request.httprequest.files.getlist('attachments'))
@@ -198,13 +201,17 @@ class DentalLabPortal(CustomerPortal):
         if order_sudo.state != 'draft':
             return request.redirect('/my/dental-orders/%s' % order_sudo.id)
 
+        line_commands = self._prepare_line_commands(post, existing_line_ids=order_sudo.work_order_line_ids.ids)
+        if not any(cmd[0] in (0, 1) for cmd in line_commands):
+            return request.redirect('/my/dental-orders/%s/edit' % order_sudo.id)
+        
         vals = {
             'patient_name': post.get('patient_name'),
             'shade': post.get('shade'),
             'date_due': post.get('date_due') or False,
             'priority': post.get('priority') or '0',
             'notes': post.get('notes'),
-            'work_order_line_ids': self._prepare_line_commands(post, existing_line_ids=order_sudo.work_order_line_ids.ids),
+            'work_order_line_ids': line_commands,
         }
         order_sudo.write(vals)
         self._create_order_attachments(order_sudo, request.httprequest.files.getlist('attachments'))
