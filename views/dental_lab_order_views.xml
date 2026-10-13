@@ -68,7 +68,7 @@
                                     <field name="product_tmpl_id" required="1" options="{'no_quick_create': True,'no_create':True,'no_open':True}"/>
                                     <field name="description" />
                                     <field name="quantity" readonly="1" force_save="1"/>
-                                    <field name="unit_price" required="1" groups="dental_lab.group_dental_lab_manager"/>
+                                    <field name="unit_price" readonly="0" force_save="1" required="1" groups="dental_lab.group_dental_lab_manager"/>
                                     <field name="total_price" readonly="1" groups="dental_lab.group_dental_lab_manager"/>
                                 </list>
                             </field>
