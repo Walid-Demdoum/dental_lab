@@ -36,7 +36,6 @@ class DentalLabPortal(CustomerPortal):
             teeth = post.get(prefix + 'teeth')
             if not product_id and not teeth:
                 continue
-            quantity = int(post.get(prefix + 'quantity') or 1)
             vals = {
                 'product_tmpl_id': product_id,
                 'teeth': teeth,
