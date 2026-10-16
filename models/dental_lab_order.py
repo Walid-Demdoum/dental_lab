@@ -40,9 +40,9 @@ class DentalLabOrder(models.Model):
     work_order_line_ids = fields.One2many('dental.order.line','work_order_id',string="Work line",required=True)
     pmma_line_ids = fields.One2many('pmma.line', 'work_order_id', string="PMMA Lines")
 
-    price_total_wol = fields.Monetary(string="Elements total",compute="_compute_amounts",store=True)
-    price_total_pmma = fields.Monetary(string="Pmma lines total",compute="_compute_amounts",store=True)
-    total_wo_price = fields.Monetary(string="Subtotal",compute="_compute_amounts",store=True)
+    price_total_wol = fields.Monetary(string="Elements total",compute="_compute_amounts",store=True,groups="dental_lab.group_dental_lab_manager")
+    price_total_pmma = fields.Monetary(string="Pmma lines total",compute="_compute_amounts",store=True,groups="dental_lab.group_dental_lab_manager")
+    total_wo_price = fields.Monetary(string="Subtotal",compute="_compute_amounts",store=True,groups="dental_lab.group_dental_lab_manager")
     
     @api.model_create_multi
     def create(self, vals_list):

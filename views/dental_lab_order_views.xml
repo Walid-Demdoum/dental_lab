@@ -14,7 +14,7 @@
                 <field name="date_due"/>
                 <field name="technician_id" groups="dental_lab.group_dental_lab_manager"/>
                 <field name="priority" widget="priority" optional="show"/>
-                <field name="total_wo_price" />
+                <field name="total_wo_price" groups="dental_lab.group_dental_lab_manager"/>
                 <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'in_progress'" decoration-danger="state == 'cancel'"/>
             </list>
         </field>
