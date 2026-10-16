@@ -25,7 +25,7 @@ class DentalLabOrderLine(models.Model):
         for rec in self:
             rec.total_price = rec.unit_price * rec.quantity
 
-    @api.depends('product_tmpl_id','product_tmpl_id.list_price')
+    @api.depends('product_tmpl_id')
     def _compute_unit_price(self):
         for rec in self:
             rec.unit_price = rec.product_tmpl_id.list_price
