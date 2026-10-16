@@ -14,7 +14,7 @@ class DentalLabOrderLine(models.Model):
     product_tmpl_id = fields.Many2one('product.template',string="Element type",required=True,ondelete='restrict',)
     quantity = fields.Integer(string="Quantity",required=True,compute='_compute_quantity', store=True, readonly=False, precompute=True)
     currency_id = fields.Many2one('res.currency',string="Currency",default= lambda self:self.env.company.currency_id.id)
-    unit_price = fields.Monetary(string="Unit price",compute="_compute_unit_price",precompute=True,store=True,groups="dental_lab.group_dental_lab_manager")
+    unit_price = fields.Monetary(string="Unit price",compute="_compute_unit_price",precompute=True,store=True,readonly=False,groups="dental_lab.group_dental_lab_manager")
     total_price = fields.Monetary(string="Total price",compute="_compute_total_price",groups="dental_lab.group_dental_lab_manager")
     teeth = fields.Char(string="Tooth")
 
