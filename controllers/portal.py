@@ -7,7 +7,6 @@ import re
 
 class DentalLabPortal(CustomerPortal):
     
-    ALLOWED_ATTACHMENT_MIMETYPES = {'model/stl','application/x-tgif','application/zip','application/vnd.rar'}
     MAX_ATTACHMENT_SIZE = 50 * 1024 * 1024  # 50 MB
     LINE_FIELD_RE = re.compile(r'^lines-(\d+)-product_tmpl_id$')
     DENTAL_PRODUCT_DOMAIN = [('sale_ok', '=', True)]
@@ -84,10 +83,6 @@ class DentalLabPortal(CustomerPortal):
             
             #TODO : Notify user instead of silent drop
             if not content or len(content) > self.MAX_ATTACHMENT_SIZE:
-                continue
-            
-            #TODO : Notify user instead of silent drop, or just maybe accept any file.
-            if (file.content_type or '') not in self.ALLOWED_ATTACHMENT_MIMETYPES:
                 continue
             
             Attachment.create({
