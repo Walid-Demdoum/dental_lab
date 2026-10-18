@@ -10,7 +10,7 @@
         and lab technicians/managers to process, track and complete them.
     """,
     'author': 'W.Demdoum',
-    'depends': ['base', 'mail','portal','product'],
+    'depends': ['base', 'mail','portal','product','account'],
     'data': [
         'security/dental_lab_security.xml',
         'security/ir.model.access.csv',

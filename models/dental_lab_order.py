@@ -1,6 +1,5 @@
-from odoo import api, fields, models,_
-from odoo.exceptions import UserError
-
+from odoo import api, fields,Command, models,_
+from odoo.exceptions import UserError,AccessError
 
 STATE_SELECTION = [ ('draft', 'New'),
                     ('in_progress', 'In Progress'),
@@ -43,6 +42,8 @@ class DentalLabOrder(models.Model):
     price_total_wol = fields.Monetary(string="Elements total",compute="_compute_amounts",store=True,groups="dental_lab.group_dental_lab_manager")
     price_total_pmma = fields.Monetary(string="Pmma lines total",compute="_compute_amounts",store=True,groups="dental_lab.group_dental_lab_manager")
     total_wo_price = fields.Monetary(string="Subtotal",compute="_compute_amounts",store=True,groups="dental_lab.group_dental_lab_manager")
+
+    invoice_id = fields.Many2one('account.move',string="Invoices")
     
     @api.model_create_multi
     def create(self, vals_list):
@@ -94,11 +95,63 @@ class DentalLabOrder(models.Model):
     def action_reset_to_draft(self):
         self.write({'state': 'draft'})
 
-    @api.depends('work_order_line_ids','work_order_line_ids.total_price','pmma_line_ids','pmma_line_ids.total_price')
+    @api.depends('work_order_line_ids','work_order_line_ids.total_price','pmma_line_ids','pmma_line_ids.state','pmma_line_ids.total_price')
     def _compute_amounts(self):
         for rec in self:
             work_lines_sum = sum(rec.work_order_line_ids.mapped('total_price'))
-            pmma_sum = sum(rec.pmma_line_ids.mapped('total_price'))
+            pmma_sum = sum(rec.pmma_line_ids.filtered(lambda l: l.state == 'validated').mapped('total_price'))
             rec.price_total_wol = work_lines_sum
             rec.price_total_pmma = pmma_sum
             rec.total_wo_price = work_lines_sum + pmma_sum
+
+    def _prepare_invoice_vals(self):
+        self.ensure_one()
+        lines = []
+        for line in self.work_order_line_ids:
+            name = line.product_tmpl_id.name
+            if line.description:
+                name += " - %s" % line.description
+            if line.teeth:
+                name += _(" (teeth: %s)", line.teeth)
+            lines.append(Command.create({
+                'product_id': line.product_tmpl_id.product_variant_id.id,
+                'name': name,
+                'quantity': line.quantity,
+                'price_unit': line.unit_price,
+            }))
+        # Only the validated PMMA line is billed; failed trial pieces are not
+        for pmma in self.pmma_line_ids.filtered(lambda l: l.state == 'validated'):
+            lines.append(Command.create({
+                'name': _("PMMA - %s", pmma.description or self.name),
+                'quantity': pmma.qty,
+                'price_unit': pmma.unit_price,
+            }))
+        return {
+            'move_type': 'out_invoice',
+            'partner_id': self.partner_id.id,
+            'currency_id': self.currency_id.id,
+            'company_id': self.company_id.id,
+            'invoice_origin': self.name,
+            'invoice_line_ids': lines,
+        }
+
+    def action_create_invoice(self):
+        if not self.env.user.has_group('dental_lab.group_dental_lab_manager'):
+            raise AccessError(_("Only Lab Managers can create invoices."))
+        for order in self:
+            if order.state != 'done':
+                raise UserError(_("Only orders in the 'Done' state can be invoiced (%s).", order.name))
+            if order.invoice_id and order.invoice_id.state != 'cancel':
+                raise UserError(_("%s is already invoiced.", order.name))
+            invoice = self.env['account.move'].with_company(order.company_id).create(
+                order._prepare_invoice_vals())
+            order.invoice_id = invoice
+            order.message_post(body=_("Invoice created: %s", invoice.name or _("Draft")))
+        if len(self) == 1:
+            return self.action_view_invoice()
+
+    def action_view_invoice(self):
+        self.ensure_one()
+        if not self.invoice_id:
+            raise UserError(_("No invoice for this work order."))
+        return self.invoice_id.get_formview_action()

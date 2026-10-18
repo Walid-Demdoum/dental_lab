@@ -14,10 +14,10 @@ class PMMA(models.Model):
     _order = 'sequence, id'
 
     sequence = fields.Integer(string="Sequence", default=10)
-    work_order_id = fields.Many2one('dental.lab.order', string="Work order",required=True, ondelete='cascade', index=True)
+    work_order_id = fields.Many2one('dental.lab.order', string="Work order",ondelete='cascade', index=True)
     date = fields.Date(string="Date", default=fields.Date.context_today)
     description = fields.Char(string="Description")
-    state = fields.Selection(selection=PMMA_STATE_SELECTION, string="Status",default='draft', copy=False, required=True)
+    state = fields.Selection(selection=PMMA_STATE_SELECTION, string="Status",default='draft', copy=False)
     currency_id = fields.Many2one('res.currency', string="Currency", default=lambda self: self.env.company.currency_id.id)
     unit_price = fields.Monetary(string="Unit price", default=0,groups="dental_lab.group_dental_lab_manager")
     qty = fields.Integer(string="Qty", default=1)
