@@ -4,6 +4,7 @@ from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 import base64
 import re
+import logging
 
 class DentalLabPortal(CustomerPortal):
     
@@ -224,6 +225,8 @@ class DentalLabPortal(CustomerPortal):
 
         attachment_sudo = request.env['ir.attachment'].sudo().browse(attachment_id)
         if attachment_sudo.exists() and attachment_sudo.res_model == 'dental.lab.order' and attachment_sudo.res_id == order_sudo.id:
+            if order_sudo.state != 'draft':
+                return request.make_json_response({'error': 'locked'}, status=403)
             attachment_sudo.unlink()
             return request.make_json_response({'success': True})
         return request.make_json_response({'error': 'not_found'}, status=404)
