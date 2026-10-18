@@ -19,9 +19,9 @@ class PMMA(models.Model):
     description = fields.Char(string="Description")
     state = fields.Selection(selection=PMMA_STATE_SELECTION, string="Status",default='draft', copy=False, required=True)
     currency_id = fields.Many2one('res.currency', string="Currency", default=lambda self: self.env.company.currency_id.id)
-    unit_price = fields.Monetary(string="Unit price", default=0)
+    unit_price = fields.Monetary(string="Unit price", default=0,groups="dental_lab.group_dental_lab_manager")
     qty = fields.Integer(string="Qty", default=1)
-    total_price = fields.Monetary(string="Total price", compute="_compute_total_price")
+    total_price = fields.Monetary(string="Total price", compute="_compute_total_price",groups="dental_lab.group_dental_lab_manager")
     attachment = fields.Binary(string="Attachment", attachment=True)
     attachment_filename = fields.Char(string="Attachment Filename")
 
