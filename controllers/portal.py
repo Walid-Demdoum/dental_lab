@@ -1,5 +1,5 @@
 from odoo import http, _
-from odoo.exceptions import AccessError, MissingError,UserError
+from odoo.exceptions import AccessError, MissingError,UserError,ValidationError
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 import base64
@@ -155,7 +155,10 @@ class DentalLabPortal(CustomerPortal):
             'notes': post.get('notes'),
             'work_order_line_ids': line_commands,
         }
-        order = request.env['dental.lab.order'].sudo().create(vals)
+        try:
+            order = request.env['dental.lab.order'].sudo().create(vals)
+        except (ValidationError, UserError):
+            return request.redirect('/my/dental-orders/new?error=1')
         self._create_order_attachments(order, request.httprequest.files.getlist('attachments'))
         return request.redirect('/my/dental-orders/%s' % order.id)
 
