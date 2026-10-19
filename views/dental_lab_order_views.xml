@@ -171,7 +171,7 @@
     </record>
 
     <record id="action_dental_lab_order" model="ir.actions.act_window">
-        <field name="name">Work Orders</field>
+        <field name="name">Dental Lab Orders</field>
         <field name="res_model">dental.lab.order</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="view_dental_lab_order_search"/>
