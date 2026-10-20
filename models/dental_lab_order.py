@@ -155,3 +155,59 @@ class DentalLabOrder(models.Model):
         if not self.invoice_id:
             raise UserError(_("No invoice for this work order."))
         return self.invoice_id.get_formview_action()
+
+
+
+    def _get_grouped_invoice_partner(self):
+        """Common dentist, or the common parent company if the orders come from different contacts of it."""
+        partners = self.mapped('partner_id')
+        if len(partners) == 1:
+            return partners
+        commercial = partners.mapped('commercial_partner_id')
+        if len(commercial) == 1:
+            return commercial
+        raise UserError(_("All selected work orders must belong to the same dentist or to the same lab."))
+
+    def action_create_grouped_invoice(self):
+        if not self.env.user.has_group('dental_lab.group_dental_lab_manager'):
+            raise AccessError(_("Only Lab Managers can create invoices."))
+        if not self:
+            raise UserError(_("Select at least one work order."))
+
+        not_done = self.filtered(lambda o: o.state != 'done')
+        if not_done:
+            raise UserError(_("Only orders in the 'Done' state can be invoiced: %s", ", ".join(not_done.mapped('name'))))
+        already = self.filtered(lambda o: o.invoice_id and o.invoice_id.state != 'cancel')
+        if already:
+            raise UserError(_("Already invoiced: %s", ", ".join(already.mapped('name'))))
+        if len(self.company_id) != 1:
+            raise UserError(_("All selected work orders must belong to the same company."))
+        if len(self.currency_id) != 1:
+            raise UserError(_("All selected work orders must use the same currency."))
+
+        partner = self._get_grouped_invoice_partner()
+        orders = self.sorted(lambda o: (o.date_order, o.id))
+
+        lines = []
+        for order in orders:
+            order_lines = order._prepare_invoice_vals()['invoice_line_ids']
+            if not order_lines:
+                continue
+            section = order.name + (" - %s" % order.ref if order.ref else "")
+            lines.append(Command.create({'display_type': 'line_section', 'name': section}))
+            lines += order_lines
+        if not lines:
+            raise UserError(_("There is nothing to invoice on the selected work orders."))
+
+        invoice = self.env['account.move'].with_company(orders.company_id).create({
+            'move_type': 'out_invoice',
+            'partner_id': partner.id,
+            'currency_id': orders.currency_id.id,
+            'company_id': orders.company_id.id,
+            'invoice_origin': ", ".join(orders.mapped('name')),
+            'invoice_line_ids': lines,
+        })
+        orders.invoice_id = invoice
+        for order in orders:
+            order.message_post(body=_("Invoice created: %s (grouped: %s)",invoice.name or _("Draft"), ", ".join(orders.mapped('name'))))
+        return invoice.get_formview_action()
