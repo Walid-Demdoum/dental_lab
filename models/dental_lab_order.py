@@ -1,5 +1,5 @@
 from odoo import api, fields,Command, models,_
-from odoo.exceptions import UserError,AccessError
+from odoo.exceptions import UserError,AccessError,ValidationError
 
 STATE_SELECTION = [ ('draft', 'New'),
                     ('in_progress', 'In Progress'),
@@ -58,6 +58,12 @@ class DentalLabOrder(models.Model):
                 if order.state != 'draft':
                     raise UserError(_("You can only edit a work order while it is still in the 'New' state."))
         return super().write(vals)
+
+    def unlink(self):
+        for record in self:
+            if record.state != 'draft':
+                raise ValidationError(_("You can only unlink draft records"))
+        return super().unlink()
 
     @api.depends('state')
     def _compute_state_kanban_order(self):
