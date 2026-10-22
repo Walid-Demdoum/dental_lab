@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="dental_lab.Many2ManyBinary3DField">
+        <div class="o_field_many2many_binary_3d">
+            <t t-call="web.Many2ManyBinaryField"/>
+            <div t-if="viewableFiles.length" class="o_dl_3d_files mt-1">
+                <button t-foreach="viewableFiles" t-as="file" t-key="file.id"
+                        type="button" class="btn btn-sm btn-outline-primary me-1 mb-1"
+                        t-att-title="'View ' + file.name + ' in 3D'"
+                        t-on-click="() => this.open3D(file)">
+                    <i class="fa fa-cube me-1"/><t t-out="file.name"/>
+                </button>
+            </div>
+        </div>
+    </t>
+
+</templates>

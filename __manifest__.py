@@ -32,6 +32,8 @@
             'dental_lab/static/src/components/teeth_field.js',
             'dental_lab/static/src/components/teeth_field.xml',
             'dental_lab/static/src/components/teeth_field.scss',
+            'dental_lab/static/src/components/many2many_binary_3d.js',
+            'dental_lab/static/src/components/many2many_binary_3d.xml',
         ],
     },
 }

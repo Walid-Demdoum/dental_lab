@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8" />
+        <title>3D Viewer</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>
+            html,
+            body {
+                margin: 0;
+                height: 100%;
+                overflow: hidden;
+                background: #eef0f3;
+                font-family: sans-serif;
+            }
+
+            #canvas-wrap {
+                position: absolute;
+                inset: 0;
+            }
+
+            #bar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                gap: .5rem;
+                padding: .5rem 1rem;
+                background: rgba(255, 255, 255, .92);
+                border-bottom: 1px solid #c2c4c7;
+            }
+
+            #title {
+                flex: 1;
+                font-weight: 600;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            #bar button {
+                padding: .3rem .8rem;
+                border: 1px solid #adb5bd;
+                border-radius: .25rem;
+                background: #fff;
+                cursor: pointer;
+            }
+
+            #bar button:hover {
+                background: #f1f3f5;
+            }
+
+            #status {
+                position: absolute;
+                inset: 0;
+                z-index: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #6c757d;
+                pointer-events: none;
+            }
+        </style>
+        <script type="importmap">
+            { "imports": { "three": "/dental_lab/static/lib/three/three.module.js" } }
+        </script>
+    </head>
+
+    <body>
+        <div id="bar">
+            <span id="title"></span>
+            <button type="button" id="btn-wire">Wireframe</button>
+            <button type="button" id="btn-reset">Reset view</button>
+        </div>
+        <div id="status">Loading…</div>
+        <div id="canvas-wrap"></div>
+        <script type="module" src="/dental_lab/static/viewer/viewer.js"></script>
+    </body>
+
+</html>

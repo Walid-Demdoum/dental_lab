@@ -56,7 +56,7 @@
                             <field name="date_order" readonly="state != 'draft'"/>
                             <field name="date_due" readonly="state != 'draft'"/>
                             <field name="priority" widget="priority" readonly="state != 'draft'"/>
-                            <field name="attachment_ids" widget="many2many_binary" readonly="state != 'draft'"/>
+                            <field name="attachment_ids" widget="many2many_binary_3d"  readonly="state != 'draft'"/>
                         </group>
                     </group>
                     <group>
