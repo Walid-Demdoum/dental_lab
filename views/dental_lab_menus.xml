@@ -1,14 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <menuitem id="menu_dental_lab_root"
-              name="Dental Lab"
+              name="YTS Lab"
               sequence="45"
               web_icon="dental_lab,static/description/tooth.png"
               groups="group_dental_lab_technician"/>
 
     <menuitem id="menu_dental_lab_orders"
-              name="Work Orders"
+              name="Work orders"
               parent="menu_dental_lab_root"
               action="action_dental_lab_order"
               sequence="10"/>
+
+    
+    <!-- Product menu in detal lab root -->
+    <record id="product_template_in_dental_action" model="ir.actions.act_window">
+        <field name="name">Products</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'default_type': 'service','default_sale_ok':True,'default_purchase_ok':False,'default_taxes_id':False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No products yet</p>
+        </field>
+    </record>
+
+    <menuitem
+        id="product_template_dental_menu"
+        name="Products"
+        action="product_template_in_dental_action"
+        groups="dental_lab.group_dental_lab_manager"
+        parent="dental_lab.menu_dental_lab_root"
+        sequence="10"/>
+    
+    
+    <!-- Dentists -->
+    <record id="dentist_view_action" model="ir.actions.act_window">
+        <field name="name">Dentists</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('partner_type','=','dentist')]</field>
+        <field name="context">{'default_partner_type': 'dentist'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No dentists yet</p>
+        </field>
+    </record>
+
+    <menuitem
+        id="dentist_menu"
+        name="Dentists"
+        action="dentist_view_action"
+        groups="base.group_user"
+        parent="dental_lab.menu_dental_lab_root"
+        sequence="20"/>
 </odoo>
