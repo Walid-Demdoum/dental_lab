@@ -8,10 +8,11 @@ import {
 const VIEWABLE_RE = /\.(stl|obj)$/i;
 
 export class Many2ManyBinary3DField extends Many2ManyBinaryField {
-    static template = "dental_lab.Many2ManyBinary3DField";
+    // Uses the standard "web.Many2ManyBinaryField" template; only the
+    // attachment_preview sub-template is extended (see the .xml file).
 
-    get viewableFiles() {
-        return this.files.filter((file) => file.id && VIEWABLE_RE.test(file.name || ""));
+    isViewable3D(file) {
+        return Boolean(file.id) && VIEWABLE_RE.test(file.name || "");
     }
 
     open3D(file) {

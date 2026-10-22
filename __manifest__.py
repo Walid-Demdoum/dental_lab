@@ -10,7 +10,7 @@
         and lab technicians/managers to process, track and complete them.
     """,
     'author': 'W.Demdoum',
-    'depends': ['base', 'mail','portal','product','account'],
+    'depends': ['web','base', 'mail','portal','product','account'],
     'data': [
         'security/dental_lab_security.xml',
         'security/ir.model.access.csv',
@@ -34,6 +34,7 @@
             'dental_lab/static/src/components/teeth_field.scss',
             'dental_lab/static/src/components/many2many_binary_3d.js',
             'dental_lab/static/src/components/many2many_binary_3d.xml',
+            'dental_lab/static/src/components/many2many_binary_3d.scss',
         ],
     },
 }
