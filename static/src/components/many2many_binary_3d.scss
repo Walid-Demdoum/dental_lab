@@ -2,7 +2,7 @@
     position: relative;
 
     .o_attachment_3d {
-        @include o-position-absolute(0, 45px, 0, $left: auto);
+        @include o-position-absolute(0, 0, 0, $left: auto);
 
         display: flex;
         align-items: center;
@@ -17,9 +17,14 @@
         font-weight: 600;
         line-height: normal;
         background-color: #2989a5 !important;
-        // Keep the button hidden until hover
+
         opacity: 0;
         pointer-events: none;
+    }
+
+    // Editable: place 3D button immediately left of delete
+    &.o_attachment_editable .o_attachment_3d {
+        right: 45px;
     }
 
     &:hover .o_attachment_3d {
