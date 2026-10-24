@@ -1,0 +1,8 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Classes\dentallab]
+@="URL:Dental Lab exocad Launcher"
+"URL Protocol"=""
+
+[HKEY_CURRENT_USER\Software\Classes\dentallab\shell\open\command]
+@="powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\DentalLab\\open_exocad.ps1\" \"%1\""

@@ -1,6 +1,14 @@
 from odoo import api, fields,Command, models,_
 from odoo.exceptions import UserError,AccessError,ValidationError
 
+from urllib.parse import urlencode
+from odoo.tools import consteq, hmac as hmac_tool
+
+import time
+
+EXOCAD_TOKEN_TTL = 15 * 60  # seconds
+EXOCAD_SCOPE = 'dental_lab_exocad'
+
 STATE_SELECTION = [ ('draft', 'New'),
                     ('in_progress', 'In Progress'),
                     ('done', 'Done'),
@@ -217,3 +225,86 @@ class DentalLabOrder(models.Model):
         for order in orders:
             order.message_post(body=_("Invoice created: %s (grouped: %s)",invoice.name or _("Draft"), ", ".join(orders.mapped('name'))))
         return invoice.get_formview_action()
+
+
+
+        # ------------------------------------------------------------------
+    # exocad integration
+    # ------------------------------------------------------------------
+    def _exocad_make_token(self):
+        self.ensure_one()
+        uid = self.env.uid
+        expiry = int(time.time()) + EXOCAD_TOKEN_TTL
+        sig = hmac_tool(self.env, EXOCAD_SCOPE, f"{self.id}:{uid}:{expiry}")
+        return f"{uid}.{expiry}.{sig}"
+
+    @api.model
+    def _exocad_resolve_token(self, order_id, token):
+        """Return the order browsed as the user who generated the token, or False."""
+        try:
+            uid, expiry, sig = (token or '').split('.')
+            uid, expiry = int(uid), int(expiry)
+        except ValueError:
+            return False
+        if expiry < time.time():
+            return False
+        expected = hmac_tool(self.env, EXOCAD_SCOPE, f"{order_id}:{uid}:{expiry}")
+        if not consteq(expected, sig):
+            return False
+        user = self.env['res.users'].sudo().browse(uid).exists()
+        if not user or not user.active:
+            return False
+        order = self.with_user(user).browse(order_id).exists()
+        if not order:
+            return False
+        try:
+            order.check_access('read')
+        except AccessError:
+            return False
+        return order
+
+    def _exocad_payload(self):
+        """Order data sent to the exocad workstation (no prices)."""
+        self.ensure_one()
+        is_manager = self.env.user.has_group('dental_lab.group_dental_lab_manager')
+        partner = self.partner_id.sudo()
+        # Technicians never see the real dentist identity
+        dentist = partner.name if is_manager else partner.anon_code
+        lines = []
+        all_teeth = set()
+        for line in self.work_order_line_ids:
+            teeth = line._get_teeth_list()
+            all_teeth.update(teeth)
+            lines.append({
+                'element_type': line.product_tmpl_id.name or '',
+                'description': line.description or '',
+                'teeth': teeth,
+                'quantity': line.quantity,
+            })
+        return {
+            'id': self.id,
+            'reference': self.name,
+            'form_number': self.ref or '',
+            'dentist': dentist or '',
+            'patient_name': self.patient_name or '',
+            'technician': self.technician_id.name or '',
+            'shade': self.shade or '',
+            'order_date': self.date_order.isoformat() if self.date_order else '',
+            'due_date': self.date_due.isoformat() if self.date_due else '',
+            'priority': 'urgent' if self.priority == '1' else 'normal',
+            'notes': self.notes or '',
+            'teeth': sorted(all_teeth, key=int),
+            'lines': lines,
+        }
+
+    def action_open_exocad(self):
+        self.ensure_one()
+        if not self.env.user.has_group('dental_lab.group_dental_lab_technician'):
+            raise AccessError(_("Only technicians and lab managers can open exocad."))
+        self.message_post(body=_("exocad project requested by %s", self.env.user.name))
+        query = urlencode({'order': self.id, 'token': self._exocad_make_token()})
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'dental_lab.open_exocad',
+            'params': {'url': f"dentallab://exocad?{query}"},
+        }

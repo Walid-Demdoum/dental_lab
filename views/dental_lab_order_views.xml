@@ -31,6 +31,9 @@
                     <button name="action_cancel" type="object" string="Cancel" invisible="state in ('done', 'cancel')"/>
                     <button name="action_reset_to_draft" type="object" string="Reset to New" invisible="state != 'cancel'" groups="dental_lab.group_dental_lab_manager"/>
                     <button name="action_create_invoice" type="object" string="Create Invoice" class="btn-primary" invisible="state != 'done'" groups="dental_lab.group_dental_lab_manager"/>
+                    <button name="action_open_exocad" type="object" string="Open in exocad" 
+                        class="btn-secondary"
+                        groups="dental_lab.group_dental_lab_technician"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
