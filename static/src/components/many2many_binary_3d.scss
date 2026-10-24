@@ -18,16 +18,17 @@
         line-height: normal;
         background-color: #2989a5 !important;
 
+        transform: scaleX(0);
+        transform-origin: right center;
         opacity: 0;
         pointer-events: none;
+        transition: transform 0.25s ease, opacity 0.2s ease;
     }
-
-    // Editable: place 3D button immediately left of delete
     &.o_attachment_editable .o_attachment_3d {
         right: 45px;
     }
-
     &:hover .o_attachment_3d {
+        transform: scaleX(1);
         opacity: 1;
         pointer-events: auto;
     }
