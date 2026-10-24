@@ -1,5 +1,8 @@
 /** @odoo-module **/
+import { Component } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+import { useService } from "@web/core/utils/hooks";
+import { Dialog } from "@web/core/dialog/dialog";
 import {
     Many2ManyBinaryField,
     many2ManyBinaryField,
@@ -7,19 +10,27 @@ import {
 
 const VIEWABLE_RE = /\.(stl|obj)$/i;
 
+export class Viewer3DDialog extends Component {
+    static template = "dental_lab.Viewer3DDialog";
+    static components = { Dialog };
+    static props = ["title", "url", "close?"];
+}
+
 export class Many2ManyBinary3DField extends Many2ManyBinaryField {
-    // Uses the standard "web.Many2ManyBinaryField" template; only the
-    // attachment_preview sub-template is extended (see the .xml file).
+    setup() {
+        super.setup();
+        this.dialogService = useService("dialog");
+    }
 
     isViewable3D(file) {
         return Boolean(file.id) && VIEWABLE_RE.test(file.name || "");
     }
 
     open3D(file) {
-        const url = `/dental_lab/static/viewer/viewer.html?id=${file.id}&name=${encodeURIComponent(file.name)}`;
-        window.open(url, "_blank");
-        // Popup window instead of a tab:
-        // window.open(url, "dentalViewer", "width=1100,height=750,resizable=yes");
+        this.dialogService.add(Viewer3DDialog, {
+            title: `3D - ${file.name}`,
+            url: `/dental_lab/static/viewer/viewer.html?id=${file.id}&name=${encodeURIComponent(file.name)}`,
+        });
     }
 }
 

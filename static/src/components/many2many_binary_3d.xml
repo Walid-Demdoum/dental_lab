@@ -13,4 +13,11 @@
         </xpath>
     </t>
 
+    <!-- Popup dialog hosting the viewer -->
+    <t t-name="dental_lab.Viewer3DDialog">
+        <Dialog size="'xl'" title="props.title" footer="false" withBodyPadding="false">
+            <iframe t-att-src="props.url" class="o_dl_viewer_frame" title="3D viewer"/>
+        </Dialog>
+    </t>
+
 </templates>
