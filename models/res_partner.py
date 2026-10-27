@@ -6,6 +6,7 @@ DENTIST_SENSITIVE_FIELDS = [
     'name', 'phone', 'mobile', 'email',
     'street', 'street2', 'city', 'zip', 'vat', 'website',
 ]
+PROTECTED_FIELDS = DENTIST_SENSITIVE_FIELDS + ['partner_type', 'anon_code']
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -46,7 +47,7 @@ class ResPartner(models.Model):
         if self._is_restricted_technician():
             for partner in self:
                 if partner.partner_type == 'dentist':
-                    for f in DENTIST_SENSITIVE_FIELDS:
+                    for f in PROTECTED_FIELDS:
                         vals.pop(f, None)
         res = super().write(vals)
         if vals.get('partner_type') == 'dentist':
