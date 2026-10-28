@@ -40,9 +40,11 @@
             <t t-if="orders" t-call="portal.portal_table">
                 <thead>
                     <tr class="active">
+                        <th>Work order</th>
                         <th>Reference</th>
                         <th>Patient</th>
                         <th>Order Date</th>
+                        <th>Price</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -53,8 +55,10 @@
                                 <span t-field="order.name"/>
                             </a>
                         </td>
+                        <td><span t-field="order.ref"/></td>
                         <td><span t-field="order.patient_name"/></td>
                         <td><span t-field="order.date_order"/></td>
+                        <td><span t-field="order.total_wo_price" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}"/></td>
                         <td>
                             <span t-field="order.state" t-attf-class="badge #{'text-bg-success' if order.state == 'done' else ('text-bg-warning' if order.state == 'in_progress' else 'text-bg-secondary')}"/>
                             <a t-if="order.state == 'draft'" t-attf-href="/my/dental-orders/#{order.id}/edit" class="ms-2" title="Edit">
@@ -164,7 +168,7 @@
                 </li>
             </ul>
             <input type="file" class="form-control form-control-sm" name="attachments" multiple="multiple" accept=".stl,.obj,.rar,.zip"/>
-            <div class="form-text">STL, OBJ, ZIP or RAR, up to 50 MB each.</div>
+            <div class="form-text">STL, OBJ, ZIP or RAR, up to 100 MB each.</div>
         </div>
     </template>
 

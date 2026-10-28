@@ -200,12 +200,12 @@ class DentalLabPortal(CustomerPortal):
         )
 
     # ------------------------------------------------------------------
-    # Routes
+    # Routes*****
     # ------------------------------------------------------------------
     @http.route(['/my/dental-orders', '/my/dental-orders/page/<int:page>'], type='http', auth='user', website=True)
     def portal_my_dental_orders(self, page=1, sortby=None, filterby=None, **kw):
         values = self._prepare_portal_layout_values()
-        DentalOrder = request.env['dental.lab.order']
+        DentalOrder = request.env['dental.lab.order'].sudo()
         domain = [('partner_id', '=', request.env.user.partner_id.id)]
 
         searchbar_sortings = {
@@ -270,9 +270,7 @@ class DentalLabPortal(CustomerPortal):
             try:
                 # Savepoint: a failed constraint must not leave a half-created order behind.
                 with request.env.cr.savepoint():
-                    order = request.env['dental.lab.order'].sudo().with_context(
-                        mail_create_nosubscribe=True,  # do not auto-follow the dentist (privacy)
-                    ).create(vals)
+                    order = request.env['dental.lab.order'].sudo().create(vals)
                     self._create_order_attachments(order, files)
             except (ValidationError, UserError) as exc:
                 errors.append(exc.args[0] if exc.args else str(exc))
