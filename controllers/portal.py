@@ -16,7 +16,7 @@ FDI_TEETH = {str(q * 10 + n) for q in range(1, 5) for n in range(1, 9)}
 
 class DentalLabPortal(CustomerPortal):
 
-    MAX_ATTACHMENT_SIZE = 100 * 1024 * 1024  # 50 MB
+    MAX_ATTACHMENT_SIZE = 100 * 1024 * 1024  # 100 MB
     ALLOWED_ATTACHMENT_EXT = ('.stl', '.obj', '.rar', '.zip')  # keep in sync with the <input accept>
     LINE_FIELD_RE = re.compile(r'^lines-(\d+)-')
     VALID_PRIORITIES = ('0', '1')
