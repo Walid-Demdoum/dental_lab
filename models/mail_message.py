@@ -8,7 +8,7 @@ class MailMessage(models.Model):
         Partner = self.env["res.partner"]
         # Only anonymize for technicians who are not managers.
         if not Partner._is_restricted_technician():
-            return super()._author_to_store(store)
+            return
         for message in self:
             author = message.sudo().author_id
             if (author and author.partner_type == "dentist"):
