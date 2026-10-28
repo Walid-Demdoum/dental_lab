@@ -14,7 +14,7 @@ class PMMA(models.Model):
     _order = 'sequence, id'
 
     sequence = fields.Integer(string="Sequence", default=10)
-    work_order_id = fields.Many2one('dental.lab.order', string="Work order",ondelete='cascade', index=True)
+    work_order_id = fields.Many2one('dental.lab.order', string="Work order",ondelete='cascade', required=True)
     date = fields.Date(string="Date", default=fields.Date.context_today)
     description = fields.Char(string="Description")
     state = fields.Selection(selection=PMMA_STATE_SELECTION, string="Status",default='draft', copy=False)
