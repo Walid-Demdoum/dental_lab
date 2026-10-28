@@ -104,6 +104,9 @@
     <!-- Shared: form fields (title + groups + notes)     EDIT AND CREATE      -->
     <!-- ===================================================================== -->
     <template id="portal_dental_order_form_fields" name="Dental Work Order Form Fields">
+        <!-- form_values: what the user typed when the form is re-displayed after an error -->
+        <t t-set="fv" t-value="form_values or {}"/>
+        <t t-set="prio" t-value="fv.get('priority', order.priority if order else '0')"/>
         <div class="oe_title mb-3">
             <h1 class="o_dl_title">
                 <t t-if="order" t-out="order.name"/>
@@ -114,25 +117,21 @@
         <div class="o_dl_group">
             <!-- Left group -->
             <div class="o_dl_inner_group">
-                <label class="o_form_label" for="patient_name">Patient Name</label>
-                <input type="text" class="o_dl_input" id="patient_name" name="patient_name"
-                       t-att-value="order.patient_name if order else ''" required="required"/>
-
-                <label class="o_form_label" for="shade">Shade / Color</label>
-                <input type="text" class="o_dl_input" id="shade" name="shade"
-                       t-att-value="order.shade if order else ''"/>
+                <label class="o_form_label" for="patient_name">Patient Name(*)</label>
+                <input type="text" class="o_dl_input" id="patient_name" name="patient_name" t-att-value="fv.get('patient_name', order.patient_name if order else '')" required="required"/>
+                <label class="o_form_label" for="shade">Shade / Color(*)</label>
+                <input type="text" class="o_dl_input" id="shade" name="shade" t-att-value="fv.get('shade', order.shade if order else '')" required="required"/>
             </div>
 
             <!-- Right group -->
             <div class="o_dl_inner_group">
                 <label class="o_form_label" for="date_due">Due Date</label>
-                <input type="date" class="o_dl_input" id="date_due" name="date_due"
-                       t-att-value="order.date_due if order else ''"/>
+                <input type="date" class="o_dl_input" id="date_due" name="date_due" t-att-value="fv.get('date_due', order.date_due if order else '')"/>
 
                 <label class="o_form_label" for="priority">Priority</label>
                 <select class="form-select o_dl_input" id="priority" name="priority">
-                    <option value="0" t-att-selected="'selected' if not order or order.priority == '0' else None">Normal</option>
-                    <option value="1" t-att-selected="'selected' if order and order.priority == '1' else None">Urgent</option>
+                    <option value="0" t-att-selected="'selected' if prio == '0' else None">Normal</option>
+                    <option value="1" t-att-selected="'selected' if prio == '1' else None">Urgent</option>
                 </select>
 
                 <span class="o_form_label">X-Rays / Scans</span>
@@ -143,7 +142,7 @@
         <div class="o_dl_group o_dl_group_single">
             <div class="o_dl_inner_group o_dl_inner_group_wide">
                 <label class="o_form_label" for="notes">Instructions / Notes</label>
-                <textarea class="o_dl_input" id="notes" name="notes" rows="4"><t t-out="order.notes if order else ''"/></textarea>
+                <textarea class="o_dl_input" id="notes" name="notes" rows="4"><t t-out="fv.get('notes', order.notes if order else '')"/></textarea>
             </div>
         </div>
     </template>
@@ -175,7 +174,7 @@
     <!-- ===================================================================== -->
     <template id="portal_dental_order_line_row" name="Dental Work Order: Editable Line">
         <div class="o_dl_line dental-line-row">
-            <input t-if="line" type="hidden" t-attf-name="lines-#{line_index}-line_id" t-att-value="line.id"/>
+            <input t-if="line and line.id" type="hidden" t-attf-name="lines-#{line_index}-line_id" t-att-value="line.id"/>
 
             <div class="o_dl_cell">
                 <span class="o_dl_cell_label">Teeth</span>
@@ -233,8 +232,9 @@
             </div>
 
             <div id="dental-lines-container" t-att-data-products="json.dumps([{'id': p.id, 'name': p.name} for p in products])">
-                <t t-if="order and order.work_order_line_ids">
-                    <t t-foreach="order.work_order_line_ids" t-as="line">
+                <t t-set="rows" t-value="form_lines or (order.work_order_line_ids if order else [])"/>
+                <t t-if="rows">
+                    <t t-foreach="rows" t-as="line">
                         <t t-call="dental_lab.portal_dental_order_line_row"/>
                     </t>
                 </t>
@@ -281,6 +281,13 @@
             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
             <t t-call="dental_lab.portal_dental_breadcrumb"/>
+
+            <div t-if="errors" class="alert alert-danger" role="alert">
+                <strong>Please fix the following:</strong>
+                <ul class="mb-0">
+                    <li t-foreach="errors" t-as="error"><t t-out="error"/></li>
+                </ul>
+            </div>
 
             <div class="o_dl_statusbar">
                 <div class="o_dl_statusbar_buttons">
