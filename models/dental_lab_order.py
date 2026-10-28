@@ -104,9 +104,17 @@ class DentalLabOrder(models.Model):
         self.write({'state': 'done'})
 
     def action_cancel(self):
+        for order in self:
+            if order.invoice_id and order.invoice_id.state != 'cancel':
+                raise UserError(_("%s has an active invoice; cancel the invoice first.", order.name))
         self.write({'state': 'cancel'})
 
     def action_reset_to_draft(self):
+        if not self.env.user.has_group('dental_lab.group_dental_lab_manager'):
+            raise AccessError(_("Only Lab Managers can reset an order to draft."))
+        for order in self:
+            if order.invoice_id and order.invoice_id.state != 'cancel':
+                raise UserError(_("%s has an active invoice.", order.name))
         self.write({'state': 'draft'})
 
     @api.depends('work_order_line_ids','work_order_line_ids.total_price','pmma_line_ids','pmma_line_ids.state','pmma_line_ids.total_price')
