@@ -5,3 +5,4 @@ from . import pmma
 from . import account_move
 from . import res_users
 from . import mail_message
+from . import dental_lab_order_stage

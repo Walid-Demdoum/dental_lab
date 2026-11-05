@@ -35,6 +35,7 @@
                         class="btn-secondary"
                         groups="dental_lab.group_dental_lab_technician"/>
                     <field name="state" widget="statusbar"/>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}" invisible="state != 'in_progress'"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">

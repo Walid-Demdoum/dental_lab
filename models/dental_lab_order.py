@@ -29,6 +29,7 @@ class DentalLabOrder(models.Model):
 
     state = fields.Selection(selection=STATE_SELECTION,string='Status',default='draft',tracking=True,copy=False,index=True,)
     state_kanban_order = fields.Selection(selection=STATE_SELECTION_KANBAN_ORDER,string='Status kanban order',compute="_compute_state_kanban_order",store=True)
+    stage_id = fields.Many2one('dental.lab.order.stage',string="Step",tracking=True,copy=False,ondelete="restrict")
     name = fields.Char(string="Reference",required=True,copy=False,readonly=True,default=lambda self: 'New')
     ref = fields.Char(string="Form Number",copy=False)
     partner_id = fields.Many2one('res.partner',string='Dentist',required=True,index=True,default=lambda self: self.env.user.partner_id if self.env.user.has_group('base.group_portal') else False,)
@@ -65,6 +66,10 @@ class DentalLabOrder(models.Model):
             for order in self:
                 if order.state != 'draft':
                     raise UserError(_("You can only edit a work order while it is still in the 'New' state."))
+        if vals.get('stage_id'):
+            for order in self:
+                if vals.get('state', order.state) != 'in_progress':
+                    raise UserError(_("The step can only be changed while the order is In Progress."))
         return super().write(vals)
 
     def unlink(self):
@@ -93,7 +98,9 @@ class DentalLabOrder(models.Model):
                 raise UserError(_("You must add at least one work order line before starting this order."))
             if not order.technician_id:
                 raise UserError(_("A technician is required to start this work order"))
-        self.write({'state': 'in_progress'})
+            first_stage = self.env['dental.lab.order.stage'].search([], limit=1)
+
+        self.write({'state': 'in_progress','stage_id': first_stage.id})
 
     def action_done(self):
         for order in self:
@@ -107,7 +114,7 @@ class DentalLabOrder(models.Model):
         for order in self:
             if order.invoice_id and order.invoice_id.state != 'cancel':
                 raise UserError(_("%s has an active invoice; cancel the invoice first.", order.name))
-        self.write({'state': 'cancel'})
+        self.write({'state': 'cancel', 'stage_id': False})
 
     def action_reset_to_draft(self):
         if not self.env.user.has_group('dental_lab.group_dental_lab_manager'):
@@ -115,7 +122,7 @@ class DentalLabOrder(models.Model):
         for order in self:
             if order.invoice_id and order.invoice_id.state != 'cancel':
                 raise UserError(_("%s has an active invoice.", order.name))
-        self.write({'state': 'draft'})
+        self.write({'state': 'draft','stage_id': False})
 
     @api.depends('work_order_line_ids','work_order_line_ids.total_price','pmma_line_ids','pmma_line_ids.state','pmma_line_ids.total_price')
     def _compute_amounts(self):

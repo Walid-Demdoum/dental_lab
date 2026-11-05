@@ -52,4 +52,17 @@
         groups="base.group_user"
         parent="dental_lab.menu_dental_lab_root"
         sequence="20"/>
+
+    <!-- Stage menus -->
+    <menuitem id="menu_dental_lab_config"
+          name="Configuration"
+          parent="menu_dental_lab_root"
+          groups="dental_lab.group_dental_lab_manager"
+          sequence="90"/>
+
+    <menuitem id="menu_dental_lab_stage"
+            name="Work Order Steps"
+            parent="menu_dental_lab_config"
+            action="action_dental_lab_stage"
+            sequence="10"/>
 </odoo>

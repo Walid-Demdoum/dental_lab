@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="stage_design" model="dental.lab.order.stage">
+        <field name="name">Design (CAD)</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="stage_production" model="dental.lab.order.stage">
+        <field name="name">Milling / Printing</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="stage_finishing" model="dental.lab.order.stage">
+        <field name="name">Finishing</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="stage_quality" model="dental.lab.order.stage">
+        <field name="name">Quality Check</field>
+        <field name="sequence">40</field>
+    </record>
+</odoo>
