@@ -45,11 +45,11 @@
                             </div>
                         </button>
                     </div>
-                    <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-3 mb-3">
                         <div class="oe_title mb-0">
                             <h1 class="mb-0"><field name="name" readonly="1"/></h1>
                         </div>
-                        <field name="stage_id" class="ms-auto" widget="dental_stage_stepper" readonly="state != 'in_progress'" options="{'clickable': '1'}" invisible="state == 'draft'"/>
+                        <field name="stage_id" widget="dental_stage_stepper" class="ms-md-auto" invisible="state == 'draft'" readonly="state != 'in_progress'"/>
                     </div>
                     <group>
                         <group>

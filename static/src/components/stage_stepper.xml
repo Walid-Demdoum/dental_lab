@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="dental_lab.DentalStageStepperField">
-        <div class="o_dental_stepper">
+        <div class="o_dental_stepper" t-ref="root">
             <t t-foreach="state.steps" t-as="step" t-key="step.id">
                 <button type="button" class="o_dental_step"
                         t-att-class="{ 'o_dental_step_done': step_index &lt; currentIndex,'o_dental_step_current': step.id === currentId,}"

@@ -1,3 +1,7 @@
+.o_field_widget.o_field_dental_stage_stepper {
+    min-width: 0;
+    max-width: 100%;
+}
 .o_dental_stepper {
     --dl-step-size: 48px;
     --dl-step-active: #1e88e5;
@@ -7,6 +11,21 @@
     align-items: flex-start;
     overflow-x: auto;
     padding: 6px 4px 4px;
+    
+    @media (max-width: 767.98px) {
+        --dl-step-size: 40px;
+
+        .o_dental_step {
+            flex-basis: 80px;
+        }
+        .o_dental_step_circle {
+            font-size: 0.9rem;
+        }
+        .o_dental_step_label {
+            max-width: 76px;
+            font-size: 0.75rem;
+        }
+    }
 
     .o_dental_step {
         position: relative;
