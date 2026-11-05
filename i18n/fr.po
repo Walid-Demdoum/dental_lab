@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0+e-20260131\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 13:01+0000\n"
-"PO-Revision-Date: 2026-10-28 13:01+0000\n"
+"POT-Creation-Date: 2026-11-05 15:54+0000\n"
+"PO-Revision-Date: 2026-11-05 15:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -55,7 +55,7 @@ msgstr "%s est déjà facturé."
 #. odoo-python
 #: code:addons/dental_lab/controllers/portal.py:0
 msgid "%s: the file is empty."
-msgstr "%s: le fichier est vide.
+msgstr "%s: le fichier est vide"
 
 #. module: dental_lab
 #. odoo-javascript
@@ -87,7 +87,7 @@ msgstr "<option value=\"\">-- Sélectionner --</option>"
 #. module: dental_lab
 #: model_terms:ir.ui.view,arch_db:dental_lab.portal_dental_order_form_view
 msgid "<span class=\"nav-link active\">Work Lines</span>"
-msgstr "<span class=\"nav-link active\">Lignes de travails</span>
+msgstr "<span class=\"nav-link active\">Lignes de travails</span>"
 
 #. module: dental_lab
 #: model_terms:ir.ui.view,arch_db:dental_lab.portal_dental_order_line_row
@@ -178,6 +178,11 @@ msgid "Action Needed"
 msgstr "Action requise"
 
 #. module: dental_lab
+#: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order_stage__active
+msgid "Active"
+msgstr "Actif"
+
+#. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__activity_ids
 msgid "Activities"
 msgstr "Activités"
@@ -218,20 +223,25 @@ msgstr "Toute"
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid "All selected work orders must belong to the same company."
-msgstr "Tous les ordres de travail sélectionnés doivent appartenir à la même entreprise."
+msgstr ""
+"Tous les ordres de travail sélectionnés doivent appartenir à la même "
+"entreprise."
 
 #. module: dental_lab
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid ""
 "All selected work orders must belong to the same dentist or to the same lab."
-msgstr "Tous les ordres de travail sélectionnés doivent appartenir au même dentiste ou au même laboratoire."
+msgstr ""
+"Tous les ordres de travail sélectionnés doivent appartenir au même dentiste "
+"ou au même laboratoire."
 
 #. module: dental_lab
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid "All selected work orders must use the same currency."
-msgstr "Tous les ordres de travail sélectionnés doivent utiliser la même devise."
+msgstr ""
+"Tous les ordres de travail sélectionnés doivent utiliser la même devise."
 
 #. module: dental_lab
 #. odoo-python
@@ -270,7 +280,7 @@ msgstr "Nombre de pièces jointes"
 #. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_pmma_line__attachment_filename
 msgid "Attachment Filename"
-msgstr "Nom du fichier joint
+msgstr "Nom du fichier join"
 
 #. module: dental_lab
 #: model_terms:ir.ui.view,arch_db:dental_lab.view_dental_lab_order_form
@@ -303,6 +313,11 @@ msgid "Company"
 msgstr "Société"
 
 #. module: dental_lab
+#: model:ir.ui.menu,name:dental_lab.menu_dental_lab_config
+msgid "Configuration"
+msgstr ""
+
+#. module: dental_lab
 #: model:ir.model,name:dental_lab.model_res_partner
 msgid "Contact"
 msgstr ""
@@ -324,6 +339,7 @@ msgstr "Créez ou suivez vos ordres de travail ici"
 
 #. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__create_uid
+#: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order_stage__create_uid
 #: model:ir.model.fields,field_description:dental_lab.field_dental_order_line__create_uid
 #: model:ir.model.fields,field_description:dental_lab.field_pmma_line__create_uid
 msgid "Created by"
@@ -331,6 +347,7 @@ msgstr "Créé par"
 
 #. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__create_date
+#: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order_stage__create_date
 #: model:ir.model.fields,field_description:dental_lab.field_dental_order_line__create_date
 #: model:ir.model.fields,field_description:dental_lab.field_pmma_line__create_date
 msgid "Created on"
@@ -348,6 +365,11 @@ msgstr "Devise"
 #: model_terms:ir.ui.view,arch_db:dental_lab.portal_dental_order_page
 msgid "Date"
 msgstr ""
+
+#. module: dental_lab
+#: model_terms:ir.actions.act_window,help:dental_lab.action_dental_lab_stage
+msgid "Define the steps of your production workflow"
+msgstr "Définissez les étapes de votre flux de travail"
 
 #. module: dental_lab
 #: model_terms:ir.ui.view,arch_db:dental_lab.portal_dental_order_line_row
@@ -373,6 +395,17 @@ msgstr "Ordres de travail"
 #: model:ir.model,name:dental_lab.model_dental_lab_order
 msgid "Dental Lab Work Order"
 msgstr "Ordre de travail"
+
+#. module: dental_lab
+#: model:ir.model,name:dental_lab.model_dental_lab_order_stage
+msgid "Dental Lab Work Order Step"
+msgstr "Étape de la fiche de travaux pour laboratoire dentaire"
+
+#. module: dental_lab
+#. odoo-javascript
+#: code:addons/dental_lab/static/src/components/stage_stepper.js:0
+msgid "Dental Step Stepper"
+msgstr "Étapes"
 
 #. module: dental_lab
 #. odoo-javascript
@@ -418,6 +451,11 @@ msgid "Description"
 msgstr ""
 
 #. module: dental_lab
+#: model:dental.lab.order.stage,name:dental_lab.stage_design
+msgid "Design (CAD)"
+msgstr "CAD"
+
+#. module: dental_lab
 #. odoo-javascript
 #: code:addons/dental_lab/static/src/components/teeth_field.xml:0
 #: model_terms:ir.ui.view,arch_db:dental_lab.portal_dental_order_form_view
@@ -427,6 +465,7 @@ msgstr "Effacer"
 
 #. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__display_name
+#: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order_stage__display_name
 #: model:ir.model.fields,field_description:dental_lab.field_dental_order_line__display_name
 #: model:ir.model.fields,field_description:dental_lab.field_pmma_line__display_name
 msgid "Display Name"
@@ -488,9 +527,14 @@ msgid "File"
 msgstr "Document"
 
 #. module: dental_lab
+#: model:dental.lab.order.stage,name:dental_lab.stage_finishing
+msgid "Finishing"
+msgstr "Finition"
+
+#. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__message_follower_ids
 msgid "Followers"
-msgstr ""
+msgstr "Abonnées"
 
 #. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__message_partner_ids
@@ -532,6 +576,7 @@ msgstr "Page d’accueil"
 
 #. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__id
+#: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order_stage__id
 #: model:ir.model.fields,field_description:dental_lab.field_dental_order_line__id
 #: model:ir.model.fields,field_description:dental_lab.field_pmma_line__id
 msgid "ID"
@@ -550,13 +595,17 @@ msgstr "Icône indiquant une activité d’exception"
 #. module: dental_lab
 #: model:ir.model.fields,help:dental_lab.field_dental_lab_order__message_needaction
 msgid "If checked, new messages require your attention."
-msgstr "Si cette option est cochée, les nouveaux messages nécessitent votre attention."
+msgstr ""
+"Si cette option est cochée, les nouveaux messages nécessitent votre "
+"attention."
 
 #. module: dental_lab
 #: model:ir.model.fields,help:dental_lab.field_dental_lab_order__message_has_error
 #: model:ir.model.fields,help:dental_lab.field_dental_lab_order__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
-msgstr "Si cette case est cochée, certains messages présentent une erreur de distribution."
+msgstr ""
+"Si cette case est cochée, certains messages présentent une erreur de "
+"distribution."
 
 #. module: dental_lab
 #. odoo-python
@@ -626,6 +675,7 @@ msgstr "Responsable de laboratoire"
 
 #. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__write_uid
+#: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order_stage__write_uid
 #: model:ir.model.fields,field_description:dental_lab.field_dental_order_line__write_uid
 #: model:ir.model.fields,field_description:dental_lab.field_pmma_line__write_uid
 msgid "Last Updated by"
@@ -633,6 +683,7 @@ msgstr "Dernière mise à jour par"
 
 #. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__write_date
+#: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order_stage__write_date
 #: model:ir.model.fields,field_description:dental_lab.field_dental_order_line__write_date
 #: model:ir.model.fields,field_description:dental_lab.field_pmma_line__write_date
 msgid "Last Updated on"
@@ -681,6 +732,11 @@ msgstr "Erreur de distribution du message"
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__message_ids
 msgid "Messages"
 msgstr ""
+
+#. module: dental_lab
+#: model:dental.lab.order.stage,name:dental_lab.stage_production
+msgid "Milling / Printing"
+msgstr "Impréssion / Fraisage"
 
 #. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__my_activity_date_deadline
@@ -761,7 +817,9 @@ msgstr ""
 #. odoo-python
 #: code:addons/dental_lab/controllers/portal.py:0
 msgid "Nothing was saved: please select your attached files again."
-msgstr "Rien n’a été enregistré : veuillez sélectionner à nouveau vos fichiers joints."
+msgstr ""
+"Rien n’a été enregistré : veuillez sélectionner à nouveau vos fichiers "
+"joints."
 
 #. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__message_needaction_counter
@@ -793,13 +851,16 @@ msgstr "Seuls les responsables de laboratoire peuvent créer des factures."
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid "Only Lab Managers can reset an order to draft."
-msgstr "Seuls les responsables de laboratoire peuvent rétablir un ordre de travail à l’état de brouillon."
+msgstr ""
+"Seuls les responsables de laboratoire peuvent rétablir un ordre de travail à"
+" l’état de brouillon."
 
 #. module: dental_lab
 #. odoo-python
 #: code:addons/dental_lab/models/pmma.py:0
 msgid "Only a PMMA that was sent to the dentist can be marked as failed."
-msgstr "Seul un PMMA envoyé au dentiste peut être marqué comme étant un échec."
+msgstr ""
+"Seul un PMMA envoyé au dentiste peut être marqué comme étant un échec."
 
 #. module: dental_lab
 #. odoo-python
@@ -817,31 +878,38 @@ msgstr "Seules de nouvelles commandes peuvent être lancées."
 #. odoo-python
 #: code:addons/dental_lab/models/pmma.py:0
 msgid "Only one PMMA line can be validated per work order."
-msgstr "Une seule ligne PMMA peut être validée par ordre de travail.
+msgstr "Une seule ligne PMMA peut être validée par ordre de travail"
 
 #. module: dental_lab
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid "Only orders in progress can be marked as done."
-msgstr "Seules les ordres de travail en cours peuvent être marquées comme terminées."
+msgstr ""
+"Seules les ordres de travail en cours peuvent être marquées comme terminées."
 
 #. module: dental_lab
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid "Only orders in the 'Done' state can be invoiced (%s)."
-msgstr "Seules les ordres de travail à l'état « Terminé » peuvent être facturées (%s)."
+msgstr ""
+"Seules les ordres de travail à l'état « Terminé » peuvent être facturées "
+"(%s)."
 
 #. module: dental_lab
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid "Only orders in the 'Done' state can be invoiced: %s"
-msgstr "Seules les ordres de travail à l'état « Terminé » peuvent être facturées: (%s)."
+msgstr ""
+"Seules les ordres de travail à l'état « Terminé » peuvent être facturées: "
+"(%s)."
 
 #. module: dental_lab
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid "Only technicians and lab managers can open exocad."
-msgstr "Seuls les techniciens et les responsables de laboratoire peuvent ouvrir ExoCad."
+msgstr ""
+"Seuls les techniciens et les responsables de laboratoire peuvent ouvrir "
+"ExoCad."
 
 #. module: dental_lab
 #: model_terms:ir.ui.view,arch_db:dental_lab.view_dental_lab_order_form
@@ -888,7 +956,9 @@ msgstr "Total PMMA"
 #. odoo-python
 #: code:addons/dental_lab/models/pmma.py:0
 msgid "PMMA lines can only be updated while the work order is in progress."
-msgstr "Les lignes PMMA ne peuvent être mises à jour que lorsque l’ordre de travail est en cours."
+msgstr ""
+"Les lignes PMMA ne peuvent être mises à jour que lorsque l’ordre de travail "
+"est en cours."
 
 #. module: dental_lab
 #: model_terms:ir.ui.view,arch_db:dental_lab.portal_my_dental_orders
@@ -941,9 +1011,19 @@ msgid "Qty"
 msgstr "Qté"
 
 #. module: dental_lab
+#: model:dental.lab.order.stage,name:dental_lab.stage_quality
+msgid "Quality Check"
+msgstr "Contrôle qualité"
+
+#. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_order_line__quantity
 msgid "Quantity"
 msgstr "Quantité"
+
+#. module: dental_lab
+#: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__rating_ids
+msgid "Ratings"
+msgstr "Évaluations"
 
 #. module: dental_lab
 #. odoo-python
@@ -1036,6 +1116,7 @@ msgid "Selected: <span id=\"dental-odontogram-selected\">None</span>"
 msgstr "Sélectionné: <span id=\"dental-odontogram-selected\">Aucun</span>"
 
 #. module: dental_lab
+#: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order_stage__sequence
 #: model:ir.model.fields,field_description:dental_lab.field_pmma_line__sequence
 msgid "Sequence"
 msgstr "Séquence"
@@ -1090,6 +1171,12 @@ msgid "Status kanban order"
 msgstr ""
 
 #. module: dental_lab
+#: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order__stage_id
+#: model:ir.model.fields,field_description:dental_lab.field_dental_lab_order_stage__name
+msgid "Step"
+msgstr "Étape"
+
+#. module: dental_lab
 #: model_terms:ir.ui.view,arch_db:dental_lab.portal_dental_order_form
 msgid "Submit Work Order"
 msgstr "Soumettre"
@@ -1123,9 +1210,15 @@ msgid "The due date is not a valid date."
 msgstr "La date d’échéance n’est pas une date valide."
 
 #. module: dental_lab
+#. odoo-python
+#: code:addons/dental_lab/models/dental_lab_order.py:0
+msgid "The step can only be changed while the order is In Progress."
+msgstr "L’étape ne peut être modifiée que lorsque la commande est « En cours »."
+
+#. module: dental_lab
 #: model_terms:ir.ui.view,arch_db:dental_lab.portal_my_dental_orders
 msgid "There are no dental work orders yet."
-msgstr ""
+msgstr "Il n’y a pas encore d'ordres de travail."
 
 #. module: dental_lab
 #. odoo-python
@@ -1137,7 +1230,15 @@ msgstr "Il n’y a rien à facturer sur les ordres de travail sélectionnés."
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid "This order has PMMA lines but none of them has been validated yet."
-msgstr "Cet ordre de travail comporte des lignes PMMA, mais aucune d’entre elles n’a encore été validée."
+msgstr ""
+"Cet ordre de travail comporte des lignes PMMA, mais aucune d’entre elles n’a"
+" encore été validée."
+
+#. module: dental_lab
+#. odoo-python
+#: code:addons/dental_lab/models/dental_lab_order_stage.py:0
+msgid "This step is used by work orders. Archive it instead of deleting it."
+msgstr "Cette étape est utilisée par des ordres de travail. Archivez-la plutôt que de la supprimer."
 
 #. module: dental_lab
 #: model:ir.model.fields,field_description:dental_lab.field_dental_order_line__teeth
@@ -1216,6 +1317,12 @@ msgid "Work Order"
 msgstr "Ordre de travail"
 
 #. module: dental_lab
+#: model:ir.actions.act_window,name:dental_lab.action_dental_lab_stage
+#: model:ir.ui.menu,name:dental_lab.menu_dental_lab_stage
+msgid "Work Order Steps"
+msgstr "Étapes d'ordre de travail"
+
+#. module: dental_lab
 #: model_terms:ir.ui.view,arch_db:dental_lab.portal_dental_breadcrumb
 #: model_terms:ir.ui.view,arch_db:dental_lab.portal_my_dental_orders
 #: model_terms:ir.ui.view,arch_db:dental_lab.view_partner_form_inherit_dental_lab
@@ -1258,13 +1365,16 @@ msgstr ""
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid "You can only edit a work order while it is still in the 'New' state."
-msgstr "Vous ne pouvez modifier un ordre de travail que lorsqu'il se trouve encore à l'état « Nouveau »."
+msgstr ""
+"Vous ne pouvez modifier un ordre de travail que lorsqu'il se trouve encore à"
+" l'état « Nouveau »."
 
 #. module: dental_lab
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid "You can only unlink draft records"
-msgstr "Vous ne pouvez supprimer que des ordres de travail à l’état de brouillon."
+msgstr ""
+"Vous ne pouvez supprimer que des ordres de travail à l’état de brouillon."
 
 #. module: dental_lab
 #. odoo-python
@@ -1273,14 +1383,16 @@ msgid ""
 "You cannot add a new PMMA line while another one for this work order is "
 "still pending."
 msgstr ""
-"Vous ne pouvez pas ajouter une nouvelle ligne PMMA alors qu’une autre, pour cet ordre de travail, est "
-"encore en attente."
+"Vous ne pouvez pas ajouter une nouvelle ligne PMMA alors qu’une autre, pour "
+"cet ordre de travail, est encore en attente."
 
 #. module: dental_lab
 #. odoo-python
 #: code:addons/dental_lab/models/dental_lab_order.py:0
 msgid "You must add at least one work order line before starting this order."
-msgstr "Vous devez ajouter au moins une ligne d’ordre de travail avant de le démarrer."
+msgstr ""
+"Vous devez ajouter au moins une ligne d’ordre de travail avant de le "
+"démarrer."
 
 #. module: dental_lab
 #: model_terms:ir.ui.view,arch_db:dental_lab.portal_my_home_dental_order
