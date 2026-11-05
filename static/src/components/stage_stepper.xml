@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="dental_lab.DentalStageStepperField">
+        <div class="o_dental_stepper">
+            <t t-foreach="state.steps" t-as="step" t-key="step.id">
+                <button type="button" class="o_dental_step"
+                        t-att-class="{ 'o_dental_step_done': step_index &lt; currentIndex,'o_dental_step_current': step.id === currentId,}"
+                        t-att-disabled="props.readonly"
+                        t-att-title="step.label"
+                        t-on-click="() => this.select(step)">
+                    <span class="o_dental_step_circle">
+                        <i t-if="step_index &lt; currentIndex" class="fa fa-check"/>
+                        <t t-else="" t-out="step_index + 1"/>
+                    </span>
+                    <span class="o_dental_step_label" t-out="step.label"/>
+                </button>
+            </t>
+        </div>
+    </t>
+</templates>

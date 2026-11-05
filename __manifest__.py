@@ -38,6 +38,9 @@
             'dental_lab/static/src/components/many2many_binary_3d.xml',
             'dental_lab/static/src/components/many2many_binary_3d.scss',
             'dental_lab/static/src/components/open_exocad_action.js',
+            'dental_lab/static/src/components/stage_stepper.js',
+            'dental_lab/static/src/components/stage_stepper.xml',
+            'dental_lab/static/src/components/stage_stepper.scss',
         ],
     },
 }

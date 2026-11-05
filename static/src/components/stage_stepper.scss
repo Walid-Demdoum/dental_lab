@@ -1,0 +1,86 @@
+.o_dental_stepper {
+    --dl-step-size: 48px;
+    --dl-step-active: #1e88e5;
+    --dl-step-done: #90caf9;
+
+    display: flex;
+    align-items: flex-start;
+    overflow-x: auto;
+    padding: 6px 4px 4px;
+
+    .o_dental_step {
+        position: relative;
+        flex: 0 0 68px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0;
+        border: 0;
+        background: none;
+        cursor: pointer;
+
+        &:not(:first-child)::before {
+            content: "";
+            position: absolute;
+            top: calc(var(--dl-step-size) / 2 - 3px);
+            right: 50%;
+            width: 100%;
+            height: 6px;
+            background: var(--bs-border-color, #e3e3e3);
+            z-index: 0;
+        }
+        &.o_dental_step_done::before,
+        &.o_dental_step_current::before {
+            background: var(--dl-step-active);
+        }
+
+        &:disabled {
+            cursor: default;
+        }
+        &:not(:disabled):not(.o_dental_step_current):hover .o_dental_step_circle {
+            background: #bbdefb;
+            color: var(--dl-step-active);
+        }
+    }
+
+    .o_dental_step_circle {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--dl-step-size);
+        height: var(--dl-step-size);
+        border-radius: 50%;
+        border: 4px solid var(--bs-body-bg, #fff);
+        background: var(--bs-secondary-bg, #f0f0f0);
+        box-shadow: 0 0 0 1px var(--bs-border-color, #e3e3e3);
+        color: var(--bs-secondary-color, #999);
+        font-weight: 600;
+        transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+    }
+
+    .o_dental_step_done .o_dental_step_circle {
+        background: var(--dl-step-done);
+        color: #fff;
+    }
+
+    .o_dental_step_current .o_dental_step_circle {
+        background: var(--dl-step-active);
+        color: #fff;
+        box-shadow: 0 0 0 1px var(--dl-step-active), 0 4px 10px rgba(30, 136, 229, 0.35);
+    }
+
+    .o_dental_step_label {
+        margin-top: 6px;
+        max-width: 90px;
+        font-size: 0.8rem;
+        line-height: 1.15;
+        text-align: center;
+        color: var(--bs-secondary-color, #888);
+    }
+    .o_dental_step_current .o_dental_step_label {
+        font-weight: 600;
+        color: var(--dl-step-active);
+    }
+}
