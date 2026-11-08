@@ -5,6 +5,7 @@ from urllib.parse import urlencode
 from odoo.tools import consteq, hmac as hmac_tool
 
 import time
+import base64
 
 EXOCAD_TOKEN_TTL = 15 * 60  # seconds
 EXOCAD_SCOPE = 'dental_lab_exocad'
@@ -26,6 +27,11 @@ class DentalLabOrder(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'date_order desc, id desc'
     _rec_name = 'name'
+
+    _sql_constraints = [
+        ('barcode_uniq', 'unique(barcode)', 'The barcode must be unique.'),
+    ]
+
 
     state = fields.Selection(selection=STATE_SELECTION,string='Status',default='draft',tracking=True,copy=False,index=True,)
     state_kanban_order = fields.Selection(selection=STATE_SELECTION_KANBAN_ORDER,string='Status kanban order',compute="_compute_state_kanban_order",store=True)
@@ -53,13 +59,55 @@ class DentalLabOrder(models.Model):
     total_wo_price = fields.Monetary(string="Subtotal",compute="_compute_amounts",store=True,groups="dental_lab.group_dental_lab_manager")
 
     invoice_id = fields.Many2one('account.move',string="Invoices")
-    
+    barcode = fields.Char(string="Barcode", copy=False, readonly=True, index=True)
+    barcode_image = fields.Binary(string="Barcode Image", compute='_compute_barcode_image')
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('dental.lab.order') or 'New'
+            if not vals.get('barcode'):
+                vals['barcode'] = self.env['ir.sequence'].next_by_code('dental.lab.order.barcode')
         return super().create(vals_list)
+
+    def _compute_barcode_image(self):
+        Report = self.env['ir.actions.report']
+        for order in self:
+            if order.barcode:
+                png = Report.barcode('Code128', order.barcode, width=600, height=150, humanreadable=1)
+                order.barcode_image = base64.b64encode(png)
+            else:
+                order.barcode_image = False
+
+    @api.model
+    def _init_missing_barcodes(self):
+        """Backfill barcodes for orders created before this feature (idempotent)."""
+        orders = self.sudo().with_context(tracking_disable=True).search(
+            [('barcode', '=', False)], order='id')
+        for order in orders:
+            order.barcode = self.env['ir.sequence'].next_by_code('dental.lab.order.barcode')
+
+    @api.model
+    def action_open_from_barcode(self, barcode):
+        """Called by the backend scan service. Returns a form action or False."""
+        if not self.has_access('read'):
+            return False
+        order = self.search([('barcode', '=', (barcode or '').strip())], limit=1)
+        if not order:
+            return False
+        return {
+            'type': 'ir.actions.act_window',
+            'name': order.name,
+            'res_model': self._name,
+            'res_id': order.id,
+            'view_mode': 'form',
+            'views': [(False, 'form')],
+            'target': 'current',
+        }
+
+    def action_print_barcode(self):
+        return self.env.ref('dental_lab.action_report_dental_lab_barcode').report_action(self)
 
     def write(self, vals):
         if self.env.user.share:

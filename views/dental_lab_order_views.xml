@@ -111,6 +111,14 @@
                                 </list>
                             </field>
                         </page>
+                        <page name="barcode" string="Barcode" groups="dental_lab.group_dental_lab_technician">
+                            <group>
+                                <field name="barcode"/>
+                            </group>
+                            <div class="text-center my-4">
+                                <field name="barcode_image" widget="image" nolabel="1" readonly="1" class="d-block mx-auto" options="{'size': [500, 160]}"/>
+                            </div>
+                        </page>
                     </notebook>
                     <group class="oe_subtotal_footer" groups="dental_lab.group_dental_lab_manager">
                         <field name="currency_id" invisible="1" />
@@ -157,6 +165,7 @@
         <field name="arch" type="xml">
             <search string="Search Dental Work Orders">
                 <field name="name"/>
+                <field name="barcode"/>
                 <field name="patient_name"/>
                 <field name="partner_id" string="Dentist"/>
                 <field name="technician_id" groups="dental_lab.group_dental_lab_manager"/>
@@ -196,4 +205,13 @@
         <field name="state">code</field>
         <field name="code">action = records.action_create_grouped_invoice()</field>
     </record>
+
+    <record id="seq_dental_lab_order_barcode" model="ir.sequence">
+        <field name="name">Dental Lab Order Barcode</field>
+        <field name="code">dental.lab.order.barcode</field>
+        <field name="prefix">DL</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <function model="dental.lab.order" name="_init_missing_barcodes"/>
 </odoo>

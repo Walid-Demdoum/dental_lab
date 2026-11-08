@@ -10,7 +10,7 @@
         and lab technicians/managers to process, track and complete them.
     """,
     'author': 'W.Demdoum',
-    'depends': ['web','base', 'mail','portal','product','account'],
+    'depends': ['web','base', 'mail','portal','product','account','barcodes'],
     'data': [
         'security/dental_lab_security.xml',
         'security/ir.model.access.csv',
@@ -41,6 +41,7 @@
             'dental_lab/static/src/components/stage_stepper.js',
             'dental_lab/static/src/components/stage_stepper.xml',
             'dental_lab/static/src/components/stage_stepper.scss',
+            'dental_lab/static/src/js/barcode_open_order.js',
         ],
     },
 }

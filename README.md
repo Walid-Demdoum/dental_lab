@@ -11,6 +11,9 @@ An Odoo 18.0 custom module for managing dental prosthesis work orders between de
 | License | LGPL-3 |
 | Author | W. Demdoum |
 
+## Important 
+On debain 12 make sure to use "pip3 install reportlab --upgrade --break-system-packages" this is for barcode to work
+
 ## Contents
 
 - [Features](#features)
