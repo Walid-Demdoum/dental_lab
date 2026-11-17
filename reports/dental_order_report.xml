@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="paperformat_dental_lab_compact" model="report.paperformat">
+        <field name="name">Dental Lab Compact A4</field>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">8</field>
+        <field name="margin_bottom">8</field>
+        <field name="margin_left">8</field>
+        <field name="margin_right">8</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <template id="report_dental_lab_workorder_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <div class="page dl_compact">
+                        <style>
+                            .dl_compact { font-size: 9pt; line-height: 1.25; }
+                            .dl_compact table { width: 100%; border-collapse: collapse; }
+                            .dl_compact td, .dl_compact th { padding: 2px 4px; vertical-align: top; }
+                            .dl_compact .dl_head { border-bottom: 1.5px solid #000; margin-bottom: 4px; }
+                            .dl_compact .dl_title { font-size: 13pt; font-weight: bold; margin: 0; }
+                            .dl_compact .dl_lbl { color: #555; font-size: 7.5pt; text-transform: uppercase; }
+                            .dl_compact .dl_info td { border: 1px solid #bbb; width: 25%; }
+                            .dl_compact .dl_lines th { background: #eee; border: 1px solid #999; font-size: 8pt; text-align: left; }
+                            .dl_compact .dl_lines td { border: 1px solid #ccc; }
+                            .dl_compact .dl_sec { font-weight: bold; font-size: 8.5pt; margin: 6px 0 2px; }
+                            .dl_compact .dl_urgent { border: 1.5px solid #000; padding: 0 4px; font-weight: bold; }
+                            .dl_compact .dl_notes { border: 1px solid #bbb; padding: 3px 5px; white-space: pre-wrap; }
+                        </style>
+
+                        <!-- Small header: title / reference / dates + barcode -->
+                        <table class="dl_head">
+                            <tr>
+                                <td style="width:60%; vertical-align: middle;">
+                                    <p class="dl_title">
+                                        WORK ORDER <span t-field="o.name"/>
+                                        <span t-if="o.priority == '1'" class="dl_urgent">URGENT</span>
+                                    </p>
+                                    <span class="dl_lbl" t-field="o.company_id.name"/>
+                                    <span class="dl_lbl"> | </span>
+                                    <span class="dl_lbl">Order:</span> <span t-field="o.date_order"/>
+                                    <t t-if="o.date_due">
+                                        <span class="dl_lbl"> | Due:</span> <strong t-field="o.date_due"/>
+                                    </t>
+                                </td>
+                                <td style="width:40%; text-align:right; vertical-align: middle;">
+                                    <img t-if="o.barcode"
+                                         t-attf-src="/report/barcode/?barcode_type=Code128&amp;value=#{o.barcode}&amp;width=500&amp;height=90&amp;humanreadable=1"
+                                         style="max-height:15mm; max-width:100%;" alt="Barcode"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Order info -->
+                        <table class="dl_info">
+                            <tr>
+                                <td><div class="dl_lbl">Dentist</div><span t-out="o._get_report_dentist_label()"/></td>
+                                <td><div class="dl_lbl">Patient</div><span t-field="o.patient_name"/></td>
+                                <td><div class="dl_lbl">Form No.</div><span t-field="o.ref"/></td>
+                                <td><div class="dl_lbl">Technician</div><span t-field="o.technician_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td><div class="dl_lbl">Shade</div><span t-field="o.shade"/></td>
+                                <td><div class="dl_lbl">Step</div><span t-field="o.stage_id.name"/></td>
+                                <td colspan="2"><div class="dl_lbl">Status</div><span t-field="o.state"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Work lines (no prices) -->
+                        <div class="dl_sec">Work</div>
+                        <table class="dl_lines">
+                            <thead>
+                                <tr>
+                                    <th style="width:28%">Element</th>
+                                    <th style="width:22%">Teeth (FDI)</th>
+                                    <th style="width:8%">Qty</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.work_order_line_ids" t-as="l">
+                                    <td><span t-field="l.product_tmpl_id.name"/></td>
+                                    <td><span t-field="l.teeth"/></td>
+                                    <td><span t-field="l.quantity"/></td>
+                                    <td><span t-field="l.description"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- PMMA (only if any) -->
+                        <t t-if="o.pmma_line_ids">
+                            <div class="dl_sec">PMMA</div>
+                            <table class="dl_lines">
+                                <thead>
+                                    <tr>
+                                        <th style="width:15%">Date</th>
+                                        <th>Description</th>
+                                        <th style="width:8%">Qty</th>
+                                        <th style="width:15%">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="o.pmma_line_ids" t-as="p">
+                                        <td><span t-field="p.date"/></td>
+                                        <td><span t-field="p.description"/></td>
+                                        <td><span t-field="p.qty"/></td>
+                                        <td><span t-field="p.state"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- Notes -->
+                        <t t-if="o.notes">
+                            <div class="dl_sec">Instructions</div>
+                            <div class="dl_notes" t-field="o.notes"/>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_dental_lab_workorder" model="ir.actions.report">
+        <field name="name">Work Order</field>
+        <field name="model">dental.lab.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">dental_lab.report_dental_lab_workorder_document</field>
+        <field name="report_file">dental_lab.report_dental_lab_workorder_document</field>
+        <field name="print_report_name">'Work Order - %s' % (object.name or '').replace('/', '_')</field>
+        <field name="paperformat_id" ref="dental_lab.paperformat_dental_lab_compact"/>
+        <field name="binding_model_id" ref="dental_lab.model_dental_lab_order"/>
+        <field name="binding_type">report</field>
+        <field name="groups_id" eval="[(4, ref('dental_lab.group_dental_lab_manager'))]"/>
+    </record>
+</odoo>

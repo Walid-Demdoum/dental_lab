@@ -289,9 +289,15 @@ class DentalLabOrder(models.Model):
             order.message_post(body=_("Invoice created: %s (grouped: %s)",invoice.name or _("Draft"), ", ".join(orders.mapped('name'))))
         return invoice.get_formview_action()
 
+    def _get_report_dentist_label(self):
+        """Dentist name for printed documents; technicians only get the anonymized code."""
+        self.ensure_one()
+        partner = self.partner_id.sudo()
+        if self.env.user.has_group('dental_lab.group_dental_lab_manager'):
+            return partner.name or ''
+        return partner.anon_code or ''
 
-
-        # ------------------------------------------------------------------
+    # ------------------------------------------------------------------
     # exocad integration
     # ------------------------------------------------------------------
     def _exocad_make_token(self):

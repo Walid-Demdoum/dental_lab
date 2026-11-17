@@ -21,6 +21,8 @@
         'views/dental_lab_menus.xml',
         'views/portal_templates.xml',
         'views/res_partner_view.xml',
+        'reports/dental_order_report.xml',
+        'reports/invoice_report.xml',
     ],
     'installable': True,
     'application': True,

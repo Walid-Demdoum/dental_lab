@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_dental_lab_invoice" model="report.paperformat">
+        <field name="name">Dental Lab Invoice A4</field>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">16</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    
+    <template id="report_dental_lab_invoice_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="company" t-value="o.company_id"/>
+                <t t-set="accent" t-value="company.primary_color or '#1b5e7b'"/>
+                <t t-set="blocks" t-value="o._get_dental_report_blocks()"/>
+                <t t-set="grouped" t-value="len([b for b in blocks if b['section']]) &gt; 1"/>
+                <t t-set="show_tax" t-value="any(l.tax_ids for l in o.invoice_line_ids)"/>
+                <t t-set="ncols" t-value="5 if show_tax else 4"/>
+                <t t-set="patient" t-value="o._get_dental_report_patient()"/>
+
+                <div class="article dl_inv"
+                     t-att-data-oe-model="o._name" t-att-data-oe-id="o.id"
+                     t-att-data-oe-lang="o.env.context.get('lang')">
+                    <style>
+                        .dl_inv { font-size: 9pt; line-height: 1.3; color: #222; }
+                        .dl_inv table { width: 100%; border-collapse: collapse; }
+                        .dl_inv td, .dl_inv th { vertical-align: top; }
+                        .dl_inv .dl_band { height: 5px; background: <t t-out="accent"/>; margin-bottom: 8px; }
+                        .dl_inv .dl_title { font-size: 20pt; font-weight: bold; letter-spacing: 1px; color: <t t-out="accent"/>; margin: 0; line-height: 1.1; }
+                        .dl_inv .dl_number { font-size: 12pt; font-weight: bold; }
+                        .dl_inv .dl_muted { color: #666; }
+                        .dl_inv .dl_lbl { color: #777; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .5px; }
+                        .dl_inv .dl_box { border: 1px solid #d5dbe0; border-radius: 4px; padding: 6px 9px; }
+                        .dl_inv .dl_box_title { color: <t t-out="accent"/>; font-size: 7.5pt; font-weight: bold; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 3px; }
+                        .dl_inv .dl_meta td { padding: 1px 0; }
+                        .dl_inv .dl_lines { margin-top: 10px; }
+                        .dl_inv .dl_lines thead th { background: <t t-out="accent"/>; color: #fff; padding: 5px 6px; font-size: 8pt; text-transform: uppercase; letter-spacing: .4px; }
+                        .dl_inv .dl_lines tbody td { padding: 4px 6px; border-bottom: 1px solid #e4e8ec; }
+                        .dl_inv .dl_lines tr { page-break-inside: avoid; }
+                        .dl_inv .dl_lines tr.dl_zebra td { background: #f7f9fa; }
+                        .dl_inv .dl_lines tr.dl_section td { background: #e9eef2; border-left: 4px solid <t t-out="accent"/>; font-weight: bold; padding: 5px 8px; border-bottom: 1px solid #c9d2d9; }
+                        .dl_inv .dl_lines tr.dl_note td { font-style: italic; color: #555; padding: 3px 8px 3px 14px; }
+                        .dl_inv .dl_lines tr.dl_subtotal td { text-align: right; font-weight: bold; background: #f1f4f6; border-bottom: 2px solid #c9d2d9; }
+                        .dl_inv .dl_r { text-align: right; white-space: nowrap; }
+                        .dl_inv .dl_c { text-align: center; white-space: nowrap; }
+                        .dl_inv .dl_small { font-size: 7.5pt; color: #777; }
+                        .dl_inv .dl_totals { width: 46%; margin-left: 54%; margin-top: 10px; page-break-inside: avoid; }
+                        .dl_inv .dl_totals td { padding: 3px 8px; border-bottom: 1px solid #e4e8ec; }
+                        .dl_inv .dl_totals tr.dl_grand td { background: <t t-out="accent"/>; color: #fff; font-weight: bold; font-size: 11pt; border: none; }
+                        .dl_inv .dl_totals tr.dl_due td { font-weight: bold; border-bottom: 2px solid <t t-out="accent"/>; }
+                        .dl_inv .dl_paid { display: inline-block; border: 2px solid #2e7d32; color: #2e7d32; font-weight: bold; padding: 0 8px; border-radius: 3px; letter-spacing: 1px; }
+                        .dl_inv .dl_foot_notes { margin-top: 12px; page-break-inside: avoid; }
+                        .dl_foot_bar { border-top: 1px solid #d5dbe0; padding-top: 4px; font-size: 8pt; color: #777; }
+                    </style>
+
+                    <div class="dl_band"/>
+
+                    <!-- Header: logo + company | title + number -->
+                    <table>
+                        <tr>
+                            <td style="width:55%;">
+                                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
+                                     style="max-height:18mm; max-width:55mm; margin-bottom:3px;" alt="Logo"/>
+                                <div t-else="" style="font-size:14pt; font-weight:bold;" t-out="company.name"/>
+                                <div class="dl_muted" style="font-size:8pt;">
+                                    <div t-if="company.logo" style="font-weight:bold; color:#222;" t-out="company.name"/>
+                                    <div t-field="company.partner_id"
+                                         t-options='{"widget": "contact", "fields": ["address", "phone", "email"], "no_marker": True}'/>
+                                    <div t-if="company.vat">Tax ID: <span t-field="company.vat"/></div>
+                                    <div t-if="company.company_registry">Reg. No: <span t-field="company.company_registry"/></div>
+                                </div>
+                            </td>
+                            <td style="width:45%; text-align:right;">
+                                <p class="dl_title">
+                                    <t t-if="o.move_type == 'out_refund'">CREDIT NOTE</t>
+                                    <t t-elif="o.state == 'cancel'">CANCELLED</t>
+                                    <t t-elif="o.state == 'draft'">DRAFT INVOICE</t>
+                                    <t t-else="">INVOICE</t>
+                                </p>
+                                <div class="dl_number" t-if="o.name and o.name != '/'" t-out="o.name"/>
+                                <div t-if="o.payment_state in ('paid', 'in_payment') and o.state == 'posted'" style="margin-top:4px;">
+                                    <span class="dl_paid">PAID</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Customer + invoice details -->
+                    <table style="margin-top:10px;">
+                        <tr>
+                            <td style="width:52%; padding-right:6px;">
+                                <div class="dl_box" style="min-height:24mm;">
+                                    <div class="dl_box_title">Billed to</div>
+                                    <div t-field="o.partner_id"
+                                         t-options='{"widget": "contact", "fields": ["name", "address", "phone"], "no_marker": True}'/>
+                                    <div t-if="o.partner_id.vat" class="dl_muted">Tax ID: <span t-field="o.partner_id.vat"/></div>
+                                </div>
+                            </td>
+                            <td style="width:48%; padding-left:6px;">
+                                <div class="dl_box" style="min-height:24mm;">
+                                    <div class="dl_box_title">Details</div>
+                                    <table class="dl_meta">
+                                        <tr t-if="o.invoice_date">
+                                            <td class="dl_lbl" style="width:38%;">Date</td>
+                                            <td><span t-field="o.invoice_date"/></td>
+                                        </tr>
+                                        <tr t-if="o.invoice_date_due and o.move_type == 'out_invoice'">
+                                            <td class="dl_lbl">Due date</td>
+                                            <td><strong t-field="o.invoice_date_due"/></td>
+                                        </tr>
+                                        <tr t-if="o.invoice_payment_term_id">
+                                            <td class="dl_lbl">Terms</td>
+                                            <td><span t-field="o.invoice_payment_term_id.name"/></td>
+                                        </tr>
+                                        <tr t-if="o.invoice_origin">
+                                            <td class="dl_lbl">Work orders</td>
+                                            <td><span t-field="o.invoice_origin"/></td>
+                                        </tr>
+                                        <tr t-if="patient">
+                                            <td class="dl_lbl">Patient</td>
+                                            <td><span t-out="patient"/></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Lines -->
+                    <table class="dl_lines">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left;">Description</th>
+                                <th class="dl_c" style="width:9%;">Qty</th>
+                                <th class="dl_r" style="width:15%;">Unit price</th>
+                                <th t-if="show_tax" class="dl_c" style="width:12%;">Taxes</th>
+                                <th class="dl_r" style="width:16%;">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="blocks" t-as="b">
+                                <tr t-if="b['section']" class="dl_section">
+                                    <td t-att-colspan="ncols">
+                                        <span t-out="b['section'].name"/>
+                                        <span t-if="b['patient']" class="dl_muted" style="font-weight:normal;">
+                                            &#160;·&#160;Patient: <span t-out="b['patient']"/>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <t t-foreach="b['lines']" t-as="l">
+                                    <tr t-if="l.display_type == 'line_note'" class="dl_note">
+                                        <td t-att-colspan="ncols"><span t-field="l.name"/></td>
+                                    </tr>
+                                    <t t-else="">
+                                        <tr t-att-class="'dl_zebra' if l_index % 2 else ''">
+                                            <td>
+                                                <span t-field="l.name"/>
+                                            </td>
+                                            <td class="dl_c"><span t-out="'%g' % l.quantity"/></td>
+                                            <td class="dl_r">
+                                                <span t-field="l.price_unit"
+                                                      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                <div t-if="l.discount" class="dl_small">-<span t-out="'%g' % l.discount"/>%</div>
+                                            </td>
+                                            <td t-if="show_tax" class="dl_c dl_small">
+                                                <span t-out="', '.join(t.invoice_label or t.name for t in l.tax_ids)"/>
+                                            </td>
+                                            <td class="dl_r">
+                                                <strong t-field="l.price_subtotal"
+                                                        t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                                <tr t-if="grouped and b['section']" class="dl_subtotal">
+                                    <td t-att-colspan="ncols - 1">Subtotal</td>
+                                    <td class="dl_r">
+                                        <span t-out="b['subtotal']"
+                                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <!-- Totals -->
+                    <table class="dl_totals">
+                        <tr t-if="o.amount_tax">
+                            <td>Untaxed amount</td>
+                            <td class="dl_r"><span t-field="o.amount_untaxed"/></td>
+                        </tr>
+                        <tr t-if="o.amount_tax">
+                            <td>Taxes</td>
+                            <td class="dl_r"><span t-field="o.amount_tax"/></td>
+                        </tr>
+                        <tr class="dl_grand">
+                            <td>Total</td>
+                            <td class="dl_r"><span t-field="o.amount_total"/></td>
+                        </tr>
+                        <tr t-if="o.state == 'posted' and o.amount_residual != o.amount_total" class="dl_due">
+                            <td>Amount due</td>
+                            <td class="dl_r"><span t-field="o.amount_residual"/></td>
+                        </tr>
+                    </table>
+
+                    <!-- Payment info + notes -->
+                    <div class="dl_foot_notes"
+                         t-if="o.payment_reference or o.partner_bank_id or o.invoice_payment_term_id.note or not is_html_empty(o.narration)">
+                        <div class="dl_box">
+                            <div class="dl_box_title">Payment &amp; notes</div>
+                            <div t-if="o.payment_reference">Payment reference: <strong t-field="o.payment_reference"/></div>
+                            <div t-if="o.partner_bank_id">Bank account: <span t-field="o.partner_bank_id.acc_number"/></div>
+                            <div t-if="o.invoice_payment_term_id.note" t-field="o.invoice_payment_term_id.note"/>
+                            <div t-if="not is_html_empty(o.narration)" t-field="o.narration"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer: page counter on every page -->
+                <div class="footer">
+                    <div class="dl_foot_bar">
+                        <table>
+                            <tr>
+                                <td style="text-align:left;"><span t-out="company.name"/></td>
+                                <td style="text-align:right;">Page <span class="page"/> / <span class="topage"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_dental_lab_invoice" model="ir.actions.report">
+        <field name="name">Invoice (Dental Lab)</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">dental_lab.report_dental_lab_invoice_document</field>
+        <field name="report_file">dental_lab.report_dental_lab_invoice_document</field>
+        <field name="print_report_name">object._get_report_base_filename()</field>
+        <field name="paperformat_id" ref="dental_lab.paperformat_dental_lab_invoice"/>
+        <field name="groups_id" eval="[(4, ref('dental_lab.group_dental_lab_manager'))]"/>
+    </record>
+</odoo>
